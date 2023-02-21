@@ -1,0 +1,16 @@
+Fork
+Pipe
+Dupe
+Exec
+Wait
+
+Child Process
+-Infile (file1) is stdin
+-fd[1] is stdout
+-will write to fd[1]
+
+Parent Process
+-fd[0] - stdin
+-oufile (file2) is stdout
+-outfile - stdout (use dupe)
+-will read from fd[0]
