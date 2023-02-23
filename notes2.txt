@@ -1,0 +1,29 @@
+/pipex file1 cmd1 cmd2 file2
+
+->Must behave as file1 cmd1 | cmd2 > file2
+
+New functions
+1. Pipe()
+	-A pipe connects two processes such that stdout from one process becomes stdin to another process
+	-A system call opens a pipe, which is an area in the main memory that is treated as a virtual file
+2. Fork()
+	-takes no arguments and returns a process ID
+	-creates a new process, called child from a parent process. 
+	-After new child process is created, both processes will execute the next instruction following fork system call
+	-to distinguish between parent and child
+		-if fork returns negative value, creation of child was unsuccessful
+		-fork returns 0 to newly created child process
+		-fork returns a positive process ID (pid) of the child process to the parent
+			type pid_t
+			defined in <syst/types.h>
+			use getpid() to retrieve pid assigned to process
+	-UNIX will make an exact copy of parent's address space and give to the child.
+		-parent and child have SEPARATE address space
+	-variable initialized BEFORE fork() have same values in both address space
+
+exec will overwrite and reclaim any memory that was malloc'd before
+
+
+https://www.csl.mtu.edu/cs4411.ck/www/NOTES/process/fork/create.html
+https://www.youtube.com/watch?v=PwxTbksJ2fo <- best explanation of fork
+https://www.section.io/engineering-education/fork-in-c-programming-language/

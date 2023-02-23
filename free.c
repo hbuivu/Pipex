@@ -1,3 +1,5 @@
+#include "pipex.h"
+
 void	free_split(char **list)
 {
 	int	i;

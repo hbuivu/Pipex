@@ -1,3 +1,5 @@
+#include "pipex.h"
+
 void	pipe_error(void)
 {	
 	perror("pipe error");
@@ -19,5 +21,11 @@ void	access_error(void)
 void	exec_error(void)
 {
 	perror("exec error");
+	exit(1);
+}
+
+void	path_error(void)
+{
+	perror("couldn't find PATH variable");
 	exit(1);
 }
