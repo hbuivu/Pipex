@@ -1,7 +1,4 @@
-#include <unistd.h>
-#include <stdio.h>
-#include <sys/types.h>
-#include <string.h>
+#include "pipex.h"
 
 // int main(void)
 // {
@@ -32,3 +29,38 @@
 // 	 //while buffering for parent process, child might also use printf
 // 	 //since output is not sent to screen immediately, you maynot get the right order of the expected result 
 // }
+
+void	fork2(char **envp)
+{
+	int	pid;
+
+	pid = fork();
+	if (pid == 0)
+	{
+		char *args[] = {"ls", "-la", NULL};
+		execve("/usr/bin/ls", args, envp);
+	}
+	else
+	{
+		wait(NULL);
+		printf("fork2 finished processing\n");
+	}
+}
+
+int main(int argv, char ** argc, char **envp)
+{
+	(void)argv;
+	(void)argc;
+	int pid = fork();
+	if (pid == 0)
+	{
+		fork2(envp);
+		char *args[] = {"which", "ls", NULL};
+		execve("/usr/bin/which", args, envp);
+	}
+	else 
+	{
+		wait(NULL);
+		printf("finished fork\n");
+	}
+}

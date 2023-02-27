@@ -12,7 +12,7 @@
 
 NAME = pipex
 
-SRCS = error.c free.c ft_popen.c
+SRCS = error.c free.c find_path.c pipex2.c
 
 CFLAGS = -Wall -Wextra -Werror
 
@@ -26,7 +26,7 @@ OBJS = $(SRCS:.c=.o)
 
 $(NAME): $(OBJS)
 	$(MAKE) -C $(LIBFT_DIR)
-	$(CC) $(LIBS) $(CFLAGS) $(OBJS) -o $(NAME)
+	$(CC) $(OBJS) $(LIBS) $(CFLAGS) -o $(NAME)
 
 all: $(NAME)
 		
@@ -41,3 +41,6 @@ fclean: clean
 re: fclean all
 
 .PHONY: all clean fclean re
+
+# note: in linux, cc objs libs flags -o name
+# in mac, cc libs flags objs -o name

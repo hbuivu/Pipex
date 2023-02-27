@@ -29,3 +29,9 @@ void	path_error(void)
 	perror("couldn't find PATH variable");
 	exit(1);
 }
+
+void	arg_error(void)
+{
+	perror("input: ./pipex file1 cmd1 cmd2 file2");
+	exit(1);
+}

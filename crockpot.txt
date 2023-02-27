@@ -1,0 +1,144 @@
+int	detect_newline(char *str)
+{
+	int	i;
+
+	i = -1;
+	while(str[++i])
+	{
+		if (str[i] == '\n')
+		{
+			str[i] = '\0';
+			return (1);
+		}
+	}
+	return (0);
+}
+
+char	*ft_join(char *path, char *buffer)
+{
+	int		len;
+	char	*ret_str;
+	int		i;
+	
+	len = ft_strlen(path) + ft_strlen(buffer) + 1
+	ret_str = (char *)ft_calloc(len, sizeof(char));
+	while (*path)
+	{
+		ret_str[i] = *path;
+		i++;
+		path++;
+	}
+	free(path);
+	while (*buffer)
+	{
+		ret_str[i] = *buffer;
+		i++;
+		buffer++;
+	}
+
+}
+
+char	*get_path(int fd, char *which_path)
+{
+	char	*buffer;
+	char	*path;
+	int		i;
+
+	buffer = ft_calloc(1025, sizeof(char));
+	path = ft_calloc(1, sizeof(char));
+	while (!detect_newline(buffer))
+	{
+		read(fd, buffer, 1024);
+		path = ft_join(path, buffer);
+		ft_bzero(buffer, 1024);
+	}
+	free(buffer);
+	i = -1
+	while (path[++i])
+		if (path[i] == '\n')
+			path[i] = '\0';
+	return(path);
+}
+
+// void	exec_command(char **envp, )
+// void	init_pipex(int file1, char *arg, char **envp, char * which_path)
+// {
+// 	int		fd[2];
+// 	int		pid;
+// 	// char	*path;
+// 	// char	**args;
+
+// 	if (pipe(fd) < 0)
+// 		pipe_error();
+// 	pid = fork();
+// 	if (pid < 0)
+// 		fork_error();
+// 	else if (pid == 0)
+// 	{
+// 		printf("in the child process \n");
+// 		close(fd[0]);
+// 		dup2(file1, 0);
+// 		dup2(fd[1], 1);
+// 	}
+// 	else
+// 	{
+// 		wait(NULL);
+// 		printf("in parent process\n");
+// 		char buffer[2000];
+// 		close(fd[1]);
+// 		read(fd[0], buffer, 2000);
+// 		printf("%s\n", buffer);
+// 		// dupe2(file2, fd[0]); //does this write to file2?
+// 		// close(fd[0]);
+// 	}
+// }
+
+// void	pipex(char *argc)
+// {
+// 	int	fd[2];
+// 	int	pid;
+
+// 	if (pipe(fd) < 0)
+// 		pipe_error();
+// 	pid = fork();
+// 	if (pid < 0)
+// 		fork_error();
+// 	else if (pid == 0)
+// 	{
+// 		close(fd[0]);
+// 		dupe2(file2, 0);
+// 		dupe2(fd[1], 1);
+// 		path = find_path(arg1, envp, which_path);
+// 		args = ft_split(arg1, ' ');
+// 		execve(path, args, envp);
+// 	}
+// 	else
+// 	{
+// 		wait(NULL);
+// 		close(fd[1]);
+// 		dupe2(file2, fd[0]); //does this write to file2?
+// 		close(fd[0]);
+// 	}
+// }
+
+// int main(int argv, char **argc, char **envp)
+// {
+// 	// int	i;
+// 	// if (argc < 5)
+// 	// 	arg_error();
+// 	// init_pipex(argc[2]);
+// 	// i = 3;
+// 	// while (i < argv - 2)
+// 	// {
+// 	// 	pipex(argc[i]);
+// 	// 	i++;
+// 	// }
+// 	(void)argv;
+// 	int file1 = open(argc[1], O_RDONLY);
+// 	char *which_path = return_which_path(envp);
+// 	init_pipex(file1, argc[2], envp, which_path);
+	
+// 	// char buffer[2000];
+// 	// read(fd, buffer, 2000);
+// 	// printf("%s\n", buffer);
+// }

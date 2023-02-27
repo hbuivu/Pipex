@@ -15,11 +15,10 @@
 char	*ft_strdup(const char *s1)
 {
 	char	*ret_str;
-	size_t	i;
 
 	ret_str = malloc(sizeof(char) * (ft_strlen(s1) + 1));
 	if (!ret_str)
 		return (NULL);
-	i = ft_strlcpy(ret_str, s1, ft_strlen(s1) + 1);
+	ft_strlcpy(ret_str, s1, ft_strlen(s1) + 1);
 	return (ret_str);
 }

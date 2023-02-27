@@ -27,3 +27,26 @@ exec will overwrite and reclaim any memory that was malloc'd before
 https://www.csl.mtu.edu/cs4411.ck/www/NOTES/process/fork/create.html
 https://www.youtube.com/watch?v=PwxTbksJ2fo <- best explanation of fork
 https://www.section.io/engineering-education/fork-in-c-programming-language/
+
+if there are multiple pipes
+Beginning
+-file1 is the stdin
+-fd[1] is the output that goes into that pipe
+
+Middle
+-fd[0] receives the output from the previous command and becomes input for next command
+-the result is written to tempfile
+
+-tempfile is now in file1 position; it will be overwritten in every process
+-repeat above
+
+-how can you tell when you've reached the end? -check argv
+
+heredoc
+create a temp file from stdin up until DELIMITER
+apply command to this temp file
+>writes to a file and overwrites anything else
+>>appends to the end of file
+
+while DELIMITER is not detected, continue to leave stdin open
+ 

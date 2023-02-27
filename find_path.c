@@ -12,6 +12,22 @@
 //case:
 //what if which doesn't work?
 //what if which can't find the path?
+
+
+char	*get_path(int fd)
+{
+	int		i;
+	char	*path;
+
+	path = get_next_line(fd);
+	//if !path
+		//exit
+	i = -1;
+	while(path[++i])
+		if (path[i] == '\n')
+			path[i] = '\0';
+	return (path);
+}
 	
 void	find_which_path(char **envp)
 {
@@ -65,24 +81,19 @@ char	*return_which_path(char **envp)
 	{
 		wait(NULL);
 		close(fd[1]);
-		which_path = ft_calloc(1024, sizeof(char)); //instead of calloc 1024, count length of path
-		read(fd[0], which_path, 1024);
+		which_path = get_path(fd[0]);
 		close(fd[0]);
-		// printf("now in parent directory\n");
-		// printf("%s", which_path);
 	}
 	return (which_path);
 }
 
-//run which + command -> return path
-char	*ft_popen(char *command, char **envp, char *which_path)
+char	*find_path(char *command, char **envp, char *which_path)
 {
 	char	**args;
 	int		fd[2];
 	int		pid;
 	char	*path;
 
-	printf("entering ft_popen\n");
 	path = NULL;
 	if(pipe(fd) < 0) //free which_path
 		pipe_error();
@@ -91,46 +102,33 @@ char	*ft_popen(char *command, char **envp, char *which_path)
 		fork_error();
 	else if (pid == 0) //child process
 	{
-		printf("entering child process\n");
 		close(fd[0]);
 		args = ft_split(command, ' '); //check ft_split to see if it frees stuff if malloc error
-		dup2(fd[1], 1);
+		dup2(fd[1], 1); //switch fd[1] with output
 		execve(which_path, args, envp);
 	}
 	else //parent process
 	{
 		wait(NULL);
 		close(fd[1]);
-		path = ft_calloc(1024, sizeof(char));
-		read(fd[1], path, 1024);
+		path = get_path(fd[0]);
 		close(fd[0]);
 	}
 	return (path);
 }
 
-#include <stdio.h>
+// #include <stdio.h>
 
-int main(int argv, char **argc, char **envp)
-{
-	(void)argv;
-	(void)argc;
-	char *which_path;
-	// char *path;
+// int main(int argv, char **argc, char **envp)
+// {
+// 	(void)argv;
+// 	(void)argc;
+// 	char *which_path;
+// 	char *path;
 
-	which_path = return_which_path(envp);
-	printf("%s", which_path);
-	// char *command = "which ls";
-	//char **commands = ft_split(command, ' ');
-	// path = ft_popen("which ls", envp, which_path);
-	// printf("%s", which_path);
-	// printf("%s", path);
-	// for (int i = 0; i < 3; i++)
-	// 	printf("%s\n", commands[i]);
-	// execve(which_path, commands, envp);
-	char *args[] = {
-		"which",
-		"ls",
-		NULL
-	};
-	execve(which_path, args, envp);
-}
+// 	which_path = return_which_path(envp);
+// 	path = find_path("which ls", envp, which_path);
+// 	printf("%s\n", path);
+// 	free(which_path);
+// 	free(path);
+// }
