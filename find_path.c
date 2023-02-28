@@ -87,6 +87,19 @@ char	*return_which_path(char **envp)
 	return (which_path);
 }
 
+char	**get_path_args(char *command)
+{
+	char	**commands;
+	char	*w_command;
+	char	**args;
+
+	commands = ft_split(command, ' ');
+	w_command = ft_strjoin("which ", commands[0]);
+	free(commands);
+	args = ft_split(w_command, ' ');
+	return (args);
+}
+
 char	*find_path(char *command, char **envp, char *which_path)
 {
 	char	**args;
@@ -103,7 +116,8 @@ char	*find_path(char *command, char **envp, char *which_path)
 	else if (pid == 0) //child process
 	{
 		close(fd[0]);
-		args = ft_split(command, ' '); //check ft_split to see if it frees stuff if malloc error
+		//hmmm, having to do this, maybe iterating through the path is better
+		args = get_path_args(command); //check ft_split to see if it frees stuff if malloc error
 		dup2(fd[1], 1); //switch fd[1] with output
 		execve(which_path, args, envp);
 	}

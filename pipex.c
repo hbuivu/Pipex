@@ -17,8 +17,8 @@ void	pipex(char *arg) //use a struct?
 		close(fd[0]);
 		dup2(file1, 0); //file1 is taken as the input
 		dup2(fd[1], 1); //output will be written to fd[1] so it can be read by pipe
-		path = find_path(arg1, envp, which_path);
-		args = ft_split(arg1, ' ');
+		path = find_path(arg, envp, which_path);
+		args = ft_split(arg, ' ');
 		execve(path, args, envp);
 	}
 	else //parent process

@@ -7,14 +7,11 @@
 # include <sys/wait.h>
 # include "./libft/libft.h"
 
-typedef struct exec_list
-{
-	char	*which_path;
-	char	*arg1;
-	char	*path1;
-	char	*arg2;
-	char	*path2;
-}	t_exec;
+// typedef struct exec_list
+// {
+// 	char	*which_path;
+// 	char	*path;
+// }	t_exec;
 
 void	pipe_error(void);
 void	fork_error(void);
