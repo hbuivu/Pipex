@@ -7,23 +7,36 @@
 # include <sys/wait.h>
 # include "./libft/libft.h"
 
-// typedef struct exec_list
-// {
-// 	char	*which_path;
-// 	char	*path;
-// }	t_exec;
+enum	e_perrors
+{
+	NO_ENV_PATH, //no PATH environmental variable
+	NO_PATH,
+	NO_FILE,
+	MALLOC_ERR, 
+	PIPE_ERR,
+	FORK_ERR,
+	EXEC_ERR,
+	DUP_ERR,
+	COMMAND_ERR,
+	OPTION_ERR,
+	INVALID_ARG
+};
 
-void	pipe_error(void);
-void	fork_error(void);
-void	access_error(void);
-void	exec_error(void);
-void	path_error(void);
+typedef struct	execve_list
+{
+	char		*path;
+	char		**commands;
+	// execve_list	*next;
+}	t_exec;
+
+typedef struct	master_list
+{
+	t_exec	*exec_list;
+	char	**paths; //for main2
+	int		file1;
+	int		file2;
+	int		num_commands;
+}	t_mlist;
 
 
-void	free_split(char **list);
-
-char	*find_path(char *command, char **envp, char *which_path);
-char	*return_which_path(char **envp);
-
-void	print_args(char **list);
 #endif

@@ -142,3 +142,102 @@ char	*get_path(int fd, char *which_path)
 // 	// read(fd, buffer, 2000);
 // 	// printf("%s\n", buffer);
 // }
+
+
+while (i < m->num_commands)
+	{
+		//iterate through argc
+		//create t_exec node
+			//check path
+			//check command
+		//Current node = node;
+		node = (t_exec *)ft_calloc(1, sizeof(t_exec));
+		if (!node)
+			//free m
+			//exit
+		node->commands = ft_split(argc[i], ' '); //check ft_split to see if everything gets freed during malloc error and returns NULL
+		if (!node->commands)
+			//free node;
+			//free m and everything inside of m
+			//error
+		node->path = find_path(m, node->commands[0]);
+		if (!node->path)
+			//free node->commands
+			//free node
+			//free m and everything inside of m currently
+			//error 
+		node->next = NULL;
+		if (!curr)
+			curr = node;
+		else
+			curr->next = node;
+	}
+
+	char	*find_path(t_mlist *m, char *arg) //char **envp
+{
+	// int		pid;
+	// int		fd[2];
+	int		i;
+	int		f;
+	int		x;
+	char	*path;
+
+	// if (pipe(fd) < 0)
+	// 	pipex_error(PIPE_ERR, m);
+	// pid = fork();
+	// if (pid < 0)
+	// 	pipex_error(FORK_ERR, m);
+	while (m->paths[i])
+	{
+		path = ft_strjoin_char(m->paths[i], arg, '/');
+		f = access(path, F_OK);
+		x = access(path, X_OK);
+		if (f == 0 && x == 0)
+			break;
+		else if (f == 0 && x < 0)
+			pipex_error(NO_PATH, m);
+		free(path);
+		i++;
+	}
+	if (f == 0 && x == 0)
+		return (path);
+	return (NULL);
+
+	// else if (pid == 0)
+	// {
+	// 	close(fd[0]);
+	// 	if (dup2(fd[1], 1) < 0)
+	// 		pipex_error(DUP_ERR, m);
+	// 	i = 0;
+	// 	while(m->paths[i])
+	// 	{
+	// 		path = ft_strjoin_char(m->paths[i], arg, '/');
+	// 		execve(path, arg, envp);
+	// 		free(path);
+	// 	}
+	// 	pipex_error(EXEC_ERR, m);
+	// }
+	// else
+	// {
+	// 	wait(NULL);
+	// 	close(fd[1]);
+	// 	path = get_path(fd[0]);
+	// 	close(fd[0]);
+	// }
+	// return (path);
+}
+
+// char	*get_path(int fd)
+// {
+// 	int		i;
+// 	char	*path;
+
+// 	path = get_next_line(fd);
+// 	//if !path
+// 		//exit
+// 	i = -1;
+// 	while(path[++i])
+// 		if (path[i] == '\n')
+// 			path[i] = '\0';
+// 	return (path);
+// }

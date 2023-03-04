@@ -63,8 +63,6 @@ char	*return_which_path(char **envp)
 	int		pid;
 	char	*which_path;
 
-	// if (access(command, F_OK) < 0) //check to see if this is the correct mode
-	// 	access_error();
 	which_path = NULL;
 	if (pipe(fd) < 0)
 		pipe_error();

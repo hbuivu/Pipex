@@ -1,0 +1,15 @@
+FOR MANDATORY
+1. Check argv = 5
+2. Check access of file1
+3. Parse all paths and check to make sure they are all F_OK and X_OK
+	-Can either use which path method or iterate through all paths method
+	-Create a linked list of paths and commands
+4. Pipe all commands
+
+What happens if an invalid option is chosen?? 
+	this will have to be taken care of in the execve part 
+	in the parsing, we will only be checking to see if the main command is valid
+
+Errors:
+z: command not found
+ls: invalid option -- 'z'

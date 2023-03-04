@@ -12,7 +12,7 @@
 
 NAME = pipex
 
-SRCS = main2.c
+SRCS = error.c free.c find_path.c pipex2.c
 
 CFLAGS = -Wall -Wextra -Werror
 
