@@ -186,19 +186,14 @@ void	pipex(t_mlist *m, char **envp)
 			pipex_error(FORK_ERR, m);
 		else if (pid == 0)
 		{
-			printf("child process: %i\n", i);
 			close(fd[0]);
-			printf("PRINTING INPUT FILE: \n");
-			print_file(STDIN_FILENO);
 			if (i == m->num_commands - 1)
 			{
-				printf("child process: last command\n");
 				if (dup2(m->file2, STDOUT_FILENO) < 0)
 					pipex_error(DUP_ERR, m);
 			}
 			else if (i < m->num_commands - 1)
 			{
-				printf("child process: not last command\n");
 				if (dup2(fd[1], STDOUT_FILENO) < 0)
 					pipex_error(DUP_ERR, m);
 			}
@@ -212,17 +207,14 @@ void	pipex(t_mlist *m, char **envp)
 		{
 			wait(NULL);
 			close(fd[1]);
-			printf("parent process: %i\n", i);
-			printf("printing output from fd[0]\n");
+			printf("printing file\n");
 			print_file(fd[0]);
-			if (i != m->num_commands - 1)
-			{
-				if (dup2(fd[0], STDIN_FILENO) < 0)
-					pipex_error(DUP_ERR, m);
-			}
+			// if (i != m->num_commands - 1)
+			// {
+			// 	if (dup2(fd[0], STDIN_FILENO) < 0)
+			// 		pipex_error(DUP_ERR, m);
+			// }
 			close(fd[0]);
-			// printf("PRINTING STDIN: \n");
-			// print_file(STDIN_FILENO);
 			i++;
 		}
 	}
@@ -238,12 +230,12 @@ int	main(int argv, char **argc, char **envp)
 	if (access(argc[1], F_OK) < 0 || access(argc[1], R_OK) < 0)
 		pipex_error(NO_FILE, m);
 	m = init_mlist(argv, argc, envp);
+	print_mlist(m);
 	// int i = 0;
 	// if (dup2(m->file1, STDIN_FILENO) < 0)
 	// 	pipex_error(DUP_ERR, m);
 	// execve(m->exec_list[i].path, m->exec_list[i].commands, envp);
-	// print_mlist(m);
-	pipex(m, envp);
-	free_mlist(m);
+	// pipex(m, envp);
+	// free_mlist(m);
 	return (0);
 }
