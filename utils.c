@@ -17,11 +17,11 @@ void	return_err_message(int err)
 	else if (err == EXEC_ERR)
 		perror("exec error: ");
 	else if (err == DUP_ERR)
-		perror("dup2 error: ");
+		perror("dup2 error");
 	else if (err == COMMAND_ERR)
-		perror("Command not found: "); //check later
+		perror("Command not found"); //check later
 	else if (err == OPTION_ERR)
-		perror("invalid option: "); //check later
+		perror("invalid option"); //check later
 	else if (err == INVALID_ARG)
 		ft_putstr_fd("usage: ./pipex file 1 com1 com2 file2\n", 2);
 }
@@ -64,7 +64,8 @@ void	free_texec(t_mlist *m, t_exec *exec_list)
 	while (i < m->num_commands)
 	{
 		free(exec_list[i].path);
-		free_split(exec_list[i].commands);
+		if (exec_list[i].commands)
+			free_split(exec_list[i].commands);
 		// free(exec_list[i]); //do I have to free this?
 		i++;
 	}

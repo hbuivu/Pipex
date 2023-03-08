@@ -13,3 +13,7 @@ What happens if an invalid option is chosen??
 Errors:
 z: command not found
 ls: invalid option -- 'z'
+
+here-docs
+create a str from the STDIN up until the LIMITER
+write string to write end of pipe first pipe...do we need more pipes?

@@ -241,3 +241,142 @@ while (i < m->num_commands)
 // 			path[i] = '\0';
 // 	return (path);
 // }
+
+// void	pipex(t_mlist *m, char **envp)
+// {
+// 	int	i;
+// 	int	pid;
+// 	int	fd[2];
+
+// 	if (dup2(m->file1, STDIN_FILENO) < 0)
+// 		pipex_error(DUP_ERR, m);
+// 	close(m->file1);
+// 	i = 0;
+// 	while (i < m->num_commands)
+// 	{
+// 		if (pipe(fd) < 0)
+// 			pipex_error(PIPE_ERR, m);
+// 		pid = fork();
+// 		if (pid < 0)
+// 			pipex_error(FORK_ERR, m);
+// 		else if (pid == 0)
+// 		{
+// 			printf("child process: %i\n", i);
+// 			close(fd[0]);
+// 			printf("PRINTING INPUT FILE: \n");
+// 			print_file(STDIN_FILENO);
+// 			if (i == m->num_commands - 1)
+// 			{
+// 				if (dup2(m->file2, STDOUT_FILENO) < 0)
+// 					pipex_error(DUP_ERR, m);
+// 			}
+// 			else if (i < m->num_commands - 1)
+// 			{
+// 				if (dup2(fd[1], STDOUT_FILENO) < 0)
+// 					pipex_error(DUP_ERR, m);
+// 			}
+// 			close(fd[1]);
+// 			close(m->file1);
+// 			close(m->file2);
+// 			execve(m->exec_list[i].path, m->exec_list[i].commands, envp);
+// 			pipex_error(EXEC_ERR, m);
+// 		}
+// 		else
+// 		{
+// 			wait(NULL);
+// 			close(fd[1]);
+// 			if (i != m->num_commands - 1)
+// 			{
+// 				if (dup2(fd[0], STDIN_FILENO) < 0)
+// 					pipex_error(DUP_ERR, m);
+// 			}
+// 			close(fd[0]);
+// 			printf("parent process: %i\n", i);
+// 			printf("PRINTING STDIN: \n");
+// 			print_file(STDIN_FILENO);
+// 			i++;
+// 		}
+// 	}
+// }
+
+// void	pipex(t_mlist *m, char **envp)
+// {
+// 	int	i;
+// 	int	j;
+// 	int	pid[m->num_commands];
+// 	int	fd[m->num_commands + 1][2];
+
+// 	printf("entering pipex.. \n");
+// 	i = 0;
+// 	while (i < m->num_commands)
+// 	{
+// 		if (pipe(fd[i]) < 0)
+// 			pipex_error(PIPE_ERR, m); //close all open pipes
+// 		i++;
+// 	}
+// 	printf("pipes created\n");
+// 	i = 0;
+// 	while (i < m->num_commands)
+// 	{
+// 		pid[i] = fork();
+// 		if (pid[i] < 0)
+// 			pipex_error(FORK_ERR, m); //in this, close all fds as well 
+// 		else if (pid[i] == 0) //child process
+// 		{
+// 			printf("entering child process \n");
+// 			printf("%i\n", i);
+// 			//close the pipes that aren't needed
+// 			j = 0;
+// 			while (j < m->num_commands + 1)
+// 			{
+// 				//close all pipes that aren't being used
+// 				if (j != i)
+// 					close(fd[j][0]); 
+// 				if (j != i + 1) 
+// 					close(fd[j][1]);
+// 				j++;
+// 			}
+// 			printf("closed unused fds\n");
+// 			if(dup2(fd[i][0], STDIN_FILENO) < 0) // process reads from prev pipe
+// 			{
+// 				pipex_error(DUP_ERR, m);
+// 			}
+// 			print_file(fd[i][0]);
+// 			if (dup2(fd[i + 1][1], STDOUT_FILENO) < 0) // process writes to the next pipe (so next process can read from that pipe)
+// 			{
+// 				printf("error here\n");
+// 				pipex_error(DUP_ERR, m);
+// 			}
+// 			close (fd[i][0]); //can I dup first and then close all fds? try this later
+// 			close(fd[i + 1][0]);
+// 			execve(m->exec_list[i].path, m->exec_list[i].commands, envp); //breaks out of child process before forking again
+// 		}
+// 		i++;
+
+// 	}
+// 	//parent process/main process
+// 	//read from last pipe and transfer to file2
+// 	if (dup2(m->file1, fd[0][1]) < 0)
+// 		pipex_error(DUP_ERR, m);
+// 	close(m->file1);
+// 	print_file(fd[m->num_commands][0]);
+// 	// if (dup2(m->file2, fd[m->num_commands][0]) < 0)
+// 	// 	pipex_error(DUP_ERR, m);
+// 	i = 0;
+// 	while (i < m->num_commands)
+// 	{
+// 		// waitpid(pid[i], NULL, 0);
+// 		wait(NULL);
+// 		i++;
+// 	}
+// 	//close all pipes
+// 	j = 0;
+// 	while (j < m->num_commands + 1)
+// 	{
+// 		//close all pipes that aren't being used
+// 		close(fd[j][0]);  
+// 		close(fd[j][1]);
+// 		j++;
+// 	}
+// 	close(m->file2);
+// }

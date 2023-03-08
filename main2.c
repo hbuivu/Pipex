@@ -64,13 +64,16 @@ char	*find_path(t_mlist *m, char *arg) //char **envp
 	return (NULL);
 }
 
-void	parse_paths(t_mlist *m, char **argc) //char **envp
+void	parse_paths(t_mlist *m, char **argc, int hd) //char **envp
 {
 	int		a;
 	int		i;
 	t_exec	*exec;
 
-	a = 2;
+	if (hd == 0)
+		a = 2;
+	else
+		a = 3;
 	i = 0;
 	exec = m->exec_list;
 	while (i < m->num_commands)
@@ -86,7 +89,7 @@ void	parse_paths(t_mlist *m, char **argc) //char **envp
 	}
 }
 
-t_mlist	*init_mlist(int argv, char **argc, char **envp)
+t_mlist	*init_mlist(int argv, char **argc, char **envp, int hd)
 {
 	t_mlist	*m;
 
@@ -94,148 +97,264 @@ t_mlist	*init_mlist(int argv, char **argc, char **envp)
 	m = (t_mlist *)ft_calloc(1, sizeof(t_mlist));
 	if (!m)
 		pipex_error(MALLOC_ERR, m);
-	m->num_commands = argv - 3;
+	if (hd == 0)
+		m->num_commands = argv - 3;
+	else
+		m->num_commands = argv - 4;
 	//in bonus, this will change with heredoc
-	m->paths = get_PATHS(envp);
+	m->paths = get_PATHS(envp); //prob don't need this in the mlist
 	if (!m->paths)
 		pipex_error(NO_ENV_PATH, m);
 	m->exec_list = (t_exec *)ft_calloc(m->num_commands, sizeof(t_exec));
 	if (!m->exec_list)
 		pipex_error(MALLOC_ERR, m);
-	parse_paths(m, argc);
-	m->file1 = open(argc[1], O_RDONLY);
-	m->file2 = open(argc[argv - 1], O_CREAT | O_RDWR | O_TRUNC, 0666);
-	if (m->file1 < 0 || m->file2 < 0)
-		pipex_error(NO_FILE, m);
+	parse_paths(m, argc, hd);
+	if (hd == 0)
+	{
+		m->file1 = open(argc[1], O_RDONLY);
+		m->file2 = open(argc[argv - 1], O_CREAT | O_RDWR | O_TRUNC, 0666);
+		if (m->file1 < 0 || m->file2 < 0)
+			pipex_error(NO_FILE, m);
+	}
+	else
+	{
+		m->file2 = open(argc[argv - 1], O_CREAT | O_RDWR | O_APPEND, 0666);
+		if (m->file2 < 0)
+			pipex_error(NO_FILE, m);
+	}
 	return (m);
 }
 
-// void	pipex(t_mlist *m, char **envp)
+// void	simple_pipex(t_mlist *m, char **envp) //this one only has one pipe
 // {
-// 	int	i;
-// 	int	pid;
 // 	int	fd[2];
+// 	if (dup2(m->file1, STDIN_FILENO) < 0)
+// 		pipex_error(DUP_ERR, m);
+// 	if (pipe(fd) < 0)
+// 		pipex_error(PIPE_ERR, m);
+// 	int	pid1 = fork();
+// 	if (pid1 < 0)
+// 		pipex_error(FORK_ERR, m);
+// 	if (pid1 == 0) //child process
+// 	{
+// 		dup2(fd[1], STDOUT_FILENO); //send output to fd[1];
+// 		close(fd[0]);
+// 		close(fd[1]);
+// 		execve(m->exec_list[0].path, m->exec_list[0].commands, envp);
+// 	}
+// 	int pid2 = fork();
+// 	if (pid2 < 0)
+// 		pipex_error(FORK_ERR, m);
+// 	if (pid2 == 0)
+// 	{
+// 		//the output from pid1 was sent to fd[0]. send that to stdin
+// 		if (dup2(fd[0], STDIN_FILENO) < 0) 
+// 			pipex_error(DUP_ERR, m); 
+// 		//send the output to file2
+// 		if (dup2(m->file2, STDOUT_FILENO) < 0)
+// 			pipex_error(DUP_ERR, m);
+// 		close(fd[0]);
+// 		close(fd[1]);
+// 		execve(m->exec_list[1].path, m->exec_list[1].commands, envp);
+// 	}
+
+// 	close(fd[0]);
+// 	close(fd[1]);
+// 	waitpid(pid1, NULL, 0);
+// 	waitpid(pid2, NULL, 0);
+// }
+
+// void	simple_pipex_three(t_mlist *m, char **envp) //this one only has one pipe
+// {
+// 	int	fd[2][2];
+// 	int	i;
 
 // 	if (dup2(m->file1, STDIN_FILENO) < 0)
 // 		pipex_error(DUP_ERR, m);
-// 	close(m->file1);
 // 	i = 0;
-// 	while (i < m->num_commands)
+// 	while (i < 2)
 // 	{
-// 		if (pipe(fd) < 0)
+// 		if (pipe(fd[i]) < 0)
 // 			pipex_error(PIPE_ERR, m);
-// 		pid = fork();
-// 		if (pid < 0)
-// 			pipex_error(FORK_ERR, m);
-// 		else if (pid == 0)
+// 		i++;
+// 	}
+// 	int	pid1 = fork();
+// 	if (pid1 < 0)
+// 		pipex_error(FORK_ERR, m);
+// 	if (pid1 == 0) //child process
+// 	{
+// 		if (dup2(fd[0][1], STDOUT_FILENO) < 0) //send output to fd[1];
+// 			pipex_error(DUP_ERR, m);
+// 		i = 0;
+// 		while (i < 2)
 // 		{
-// 			printf("child process: %i\n", i);
-// 			close(fd[0]);
-// 			printf("PRINTING INPUT FILE: \n");
-// 			print_file(STDIN_FILENO);
-// 			if (i == m->num_commands - 1)
-// 			{
-// 				if (dup2(m->file2, STDOUT_FILENO) < 0)
-// 					pipex_error(DUP_ERR, m);
-// 			}
-// 			else if (i < m->num_commands - 1)
-// 			{
-// 				if (dup2(fd[1], STDOUT_FILENO) < 0)
-// 					pipex_error(DUP_ERR, m);
-// 			}
-// 			close(fd[1]);
-// 			close(m->file1);
-// 			close(m->file2);
-// 			execve(m->exec_list[i].path, m->exec_list[i].commands, envp);
-// 			pipex_error(EXEC_ERR, m);
-// 		}
-// 		else
-// 		{
-// 			wait(NULL);
-// 			close(fd[1]);
-// 			if (i != m->num_commands - 1)
-// 			{
-// 				if (dup2(fd[0], STDIN_FILENO) < 0)
-// 					pipex_error(DUP_ERR, m);
-// 			}
-// 			close(fd[0]);
-// 			printf("parent process: %i\n", i);
-// 			printf("PRINTING STDIN: \n");
-// 			print_file(STDIN_FILENO);
+// 			close(fd[i][0]);
+// 			close(fd[i][1]);
 // 			i++;
 // 		}
+// 		execve(m->exec_list[0].path, m->exec_list[0].commands, envp);
 // 	}
+// 	int pid2 = fork();
+// 	if (pid2 < 0)
+// 		pipex_error(FORK_ERR, m);
+// 	if (pid2 == 0)
+// 	{
+// 		if (dup2(fd[0][0], STDIN_FILENO) < 0)
+// 			pipex_error(DUP_ERR, m);
+// 		if (dup2(fd[1][1], STDOUT_FILENO) < 0)
+// 			pipex_error(DUP_ERR, m);
+// 		i = 0;
+// 		while (i < 2)
+// 		{
+// 			close(fd[i][0]);
+// 			close(fd[i][1]);
+// 			i++;
+// 		}
+// 		execve(m->exec_list[1].path, m->exec_list[1].commands, envp);
+// 	}
+// 	int pid3 = fork();
+// 	if (pid3 < 0)
+// 		pipex_error(FORK_ERR, m);
+// 	if (pid3 == 0)
+// 	{
+// 		//the output from pid1 was sent to fd[0]. send that to stdin
+// 		if (dup2(fd[1][0], STDIN_FILENO) < 0) 
+// 			pipex_error(DUP_ERR, m); 
+// 		//send the output to file2
+// 		if (dup2(m->file2, STDOUT_FILENO) < 0)
+// 			pipex_error(DUP_ERR, m);
+// 		i = 0;
+// 		while (i < 2)
+// 		{
+// 			close(fd[i][0]);
+// 			close(fd[i][1]);
+// 			i++;
+// 		}
+// 		execve(m->exec_list[2].path, m->exec_list[2].commands, envp);
+// 	}
+// 	i = 0;
+// 	while (i < 2)
+// 	{
+// 		close(fd[i][0]);
+// 		close(fd[i][1]);
+// 		i++;
+// 	}
+// 	waitpid(pid1, NULL, 0);
+// 	waitpid(pid2, NULL, 0);
+// 	waitpid(pid3, NULL, 0);
 // }
 
 void	pipex(t_mlist *m, char **envp)
 {
+	int	fd[m->num_commands - 1][2];
+	int	pid[m->num_commands];
 	int	i;
-	int	pid;
-	int	fd[2];
+	int	j;
 
 	if (dup2(m->file1, STDIN_FILENO) < 0)
 		pipex_error(DUP_ERR, m);
 	close(m->file1);
 	i = 0;
+	while (i < m->num_commands - 1)
+	{
+		if (pipe(fd[i]) < 0)
+			pipex_error(PIPE_ERR, m);
+		i++;
+	}
+	i = 0;
 	while (i < m->num_commands)
 	{
-		if (pipe(fd) < 0)
-			pipex_error(PIPE_ERR, m);
-		pid = fork();
-		if (pid < 0)
+		pid[i] = fork();
+		if (pid[i] < 0)
 			pipex_error(FORK_ERR, m);
-		else if (pid == 0)
+		if (pid[i] == 0)
 		{
-			close(fd[0]);
+			//if first command, send stdout to the write end of pipe
+			if (i == 0)
+			{
+				printf("First child process\n");
+				if (dup2(fd[i][1], STDOUT_FILENO) < 0)
+				{
+					printf("error in 1\n");
+					pipex_error(DUP_ERR, m);
+				}
+			}
+			//if not first command, read from prior pipe as stdin
+			if (i > 0)
+			{
+				printf("Child process: %i, read from prior pipe\n", i);
+				if(dup2(fd[i - 1][0], STDIN_FILENO) < 0)
+				{
+					printf("error in 2\n");
+					pipex_error(DUP_ERR, m);
+				}
+			}
+			//if last command, write to file2
 			if (i == m->num_commands - 1)
 			{
+				printf("last command, write to file2");
 				if (dup2(m->file2, STDOUT_FILENO) < 0)
+				{
+					printf("error in 3\n");
 					pipex_error(DUP_ERR, m);
+				}
 			}
-			else if (i < m->num_commands - 1)
+			//if not the last command and not the first command, write stdout to next pipe
+			else if (i > 0)
 			{
-				if (dup2(fd[1], STDOUT_FILENO) < 0)
+				printf("child process: %i, write stdout to pipe\n", i);
+				if (dup2(fd[i][1], STDOUT_FILENO) < 0)
+				{
+					printf("error in 4\n");
 					pipex_error(DUP_ERR, m);
+				}
 			}
-			close(fd[1]);
-			close(m->file1);
-			close(m->file2);
+			j = 0;
+			while (j < m->num_commands - 1)
+			{
+				close(fd[j][0]);
+				close(fd[j][1]);
+				j++;
+			}
 			execve(m->exec_list[i].path, m->exec_list[i].commands, envp);
 			pipex_error(EXEC_ERR, m);
 		}
-		else
-		{
-			wait(NULL);
-			close(fd[1]);
-			printf("printing file\n");
-			print_file(fd[0]);
-			// if (i != m->num_commands - 1)
-			// {
-			// 	if (dup2(fd[0], STDIN_FILENO) < 0)
-			// 		pipex_error(DUP_ERR, m);
-			// }
-			close(fd[0]);
-			i++;
-		}
+		i++;
+	}
+	j = 0;
+	while (j < m->num_commands - 1)
+	{
+		close(fd[j][0]);
+		close(fd[j][1]);
+		j++;
+	}
+	i = 0;
+	while (i < m->num_commands)
+	{
+		waitpid(pid[i], NULL, 0);
+		i++;
 	}
 }
 
 int	main(int argv, char **argc, char **envp)
 {
 	t_mlist	*m;
+	int		hd; 
 
 	m = NULL;
+	hd = 0;
 	// if (argv != 5)
 	// 	pipex_error(INVALID_ARG, m);
-	if (access(argc[1], F_OK) < 0 || access(argc[1], R_OK) < 0)
-		pipex_error(NO_FILE, m);
-	m = init_mlist(argv, argc, envp);
-	print_mlist(m);
-	// int i = 0;
-	// if (dup2(m->file1, STDIN_FILENO) < 0)
-	// 	pipex_error(DUP_ERR, m);
-	// execve(m->exec_list[i].path, m->exec_list[i].commands, envp);
-	// pipex(m, envp);
-	// free_mlist(m);
+	if (argv < 5)
+		pipex_error(INVALID_ARG, m);
+	if (ft_strncmp(argc[1], "here_doc", 9) == 0)
+		hd = 1;
+	else 
+		if (access(argc[1], F_OK) < 0 || access(argc[1], R_OK) < 0)
+			pipex_error(NO_FILE, m);
+	m = init_mlist(argv, argc, envp, hd);
+	// print_mlist(m);
+	pipex(m, envp);
+	free_mlist(m);
 	return (0);
 }
