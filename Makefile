@@ -12,7 +12,7 @@
 
 NAME = pipex
 
-SRCS = main2.c
+SRCS = heredoc2.c
 
 CFLAGS = -Wall -Wextra -Werror
 

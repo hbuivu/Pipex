@@ -61,17 +61,25 @@ char	*here_doc(char *limiter)
 	if (!buf)
 		//error
 	str = NULL;
-	temp = NULL;
+	temp = NULL
 	r = read(STDIN_FILENO, buf, 100);
+	if (r < 0)
+		//error
 	while (r > 0)
 	{
 		if (!str)
-			//str = buffer;
+		{
+			str = (char *)ft_calloc(ft_strlen(buf) + 1, sizeof(char));
+			if (!str)
+				//error
+			ft_strlcpy(str, buf, ft_strlen(buf) + 1);
+		}
 		else 
-			new_str = ft_strjoin(str, buf);
+		{
+			temp = ft_strjoin(str, buf);
 			free(str);
-			&str = new_str;
-			new_str = NULL;
+			str = &temp;
+		}
 		i = detect_limiter(str);
 		if (i > -1)
 			break;
@@ -80,5 +88,9 @@ char	*here_doc(char *limiter)
 	}
 	//remove limiter from str;
 	//free buf
+}
+
+int main(char )
+{
 
 }
