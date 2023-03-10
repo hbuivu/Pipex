@@ -26,18 +26,7 @@ void	return_err_message(int err)
 		ft_putstr_fd("usage: ./pipex file 1 com1 com2 file2\n", 2);
 }
 
-void	free_split(char **list)
-{
-	int	i;
 
-	i = 0;
-	while (list[i])
-	{
-		free(list[i]);
-		i++;
-	}
-	free(list);
-}
 
 // void	free_texec(t_exec **exec_list)
 // {

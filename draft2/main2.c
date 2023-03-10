@@ -89,41 +89,6 @@ void	parse_paths(t_mlist *m, char **argc, int hd) //char **envp
 	}
 }
 
-t_mlist	*init_mlist(int argv, char **argc, char **envp, int hd)
-{
-	t_mlist	*m;
-
-	m = NULL;
-	m = (t_mlist *)ft_calloc(1, sizeof(t_mlist));
-	if (!m)
-		pipex_error(MALLOC_ERR, m);
-	if (hd == 0)
-		m->num_commands = argv - 3;
-	else
-		m->num_commands = argv - 4;
-	//in bonus, this will change with heredoc
-	m->paths = get_PATHS(envp); //prob don't need this in the mlist
-	if (!m->paths)
-		pipex_error(NO_ENV_PATH, m);
-	m->exec_list = (t_exec *)ft_calloc(m->num_commands, sizeof(t_exec));
-	if (!m->exec_list)
-		pipex_error(MALLOC_ERR, m);
-	parse_paths(m, argc, hd);
-	if (hd == 0)
-	{
-		m->file1 = open(argc[1], O_RDONLY);
-		m->file2 = open(argc[argv - 1], O_CREAT | O_RDWR | O_TRUNC, 0666);
-		if (m->file1 < 0 || m->file2 < 0)
-			pipex_error(NO_FILE, m);
-	}
-	else
-	{
-		m->file2 = open(argc[argv - 1], O_CREAT | O_RDWR | O_APPEND, 0666);
-		if (m->file2 < 0)
-			pipex_error(NO_FILE, m);
-	}
-	return (m);
-}
 
 // void	simple_pipex(t_mlist *m, char **envp) //this one only has one pipe
 // {

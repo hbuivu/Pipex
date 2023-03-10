@@ -380,3 +380,124 @@ while (i < m->num_commands)
 // 	}
 // 	close(m->file2);
 // }
+
+// char	*here_doc(char *limiter)
+// {
+// 	char	*temp;
+// 	char	*str;
+// 	char	*new_str;
+// 	int		lim_len;
+
+// 	str = NULL;
+// 	temp = NULL;
+// 	new_str = NULL;
+// 	lim_len = ft_strlen(limiter); 
+// 	while (1)
+// 	{
+// 		temp = get_next_line(STDIN_FILENO);
+// 		if (ft_strncmp(temp, limiter, lim_len) == 0)
+// 			break;
+// 		if (!str)
+// 		{
+// 			str = (char *)ft_calloc(ft_strlen(temp) + 1, sizeof(char));
+// 			// if (!str)
+// 			// 	//error
+// 			ft_strlcpy(str, temp, ft_strlen(temp) + 1);
+// 			free(temp);
+// 		}
+// 		else 
+// 		{
+// 			new_str = ft_strjoin(str, temp);
+// 			free (str);
+// 			free (temp);
+// 			str = new_str; 
+// 		}
+// 	}
+// 	free(temp);
+// 	return (str);
+// }
+
+// void	here_doc(t_mlist *m)
+// {
+// 	int	fd[2];
+// 	int	pid;
+// 	int	lim_len;
+// 	char	*line;
+
+// 	if (pipe(fd) == -1)
+// 		pipex_error(PIPE_ERR, m);
+// 	pid = fork();
+// 	if (pid == -1)
+// 		pipex_error(FORK_ERR, m);
+// 	else if (pid == 0)
+// 	{
+// 		lim_len = ft_strlen(m->limiter); 
+// 		close(fd[0]);
+// 		while (1)
+// 		{
+// 			line = get_next_line(STDIN_FILENO);
+// 			if (ft_strncmp(line, m->limiter, lim_len) == 0)
+// 			{
+// 				free(line);
+// 				close(fd[1]); //do i close this or keep it open?
+// 				return ;
+// 			}
+// 			write(fd[1], line, ft_strlen(line));
+// 			free(line);
+// 		}
+// 	}
+// 	close(fd[1]);
+// 	dup2(fd[0], STDIN_FILENO);
+// 	waitpid(pid, NULL, 0);
+// }
+
+// void	send_here_doc(t_mlist *m)
+// {
+// 	int		fd[2];
+// 	int		pid;
+// 	char	*input;
+
+// 	if (pipe(fd) == -1)
+// 		pipex_error(PIPE_ERR, m);
+// 	pid = fork();
+// 	if (pid == -1)
+// 		pipex_error(FORK_ERR, m);
+// 	else if (pid == 0)
+// 	{
+// 		close(fd[0]);
+// 		input = here_doc(m->limiter);
+// 		write(fd[1], input, ft_strlen(input) + 1); //check get next line again because each line has a null ending
+// 		close(fd[1]);
+// 		return;
+// 	}
+// 	close(fd[1]);
+// 	dup2(fd[0], STDIN_FILENO);
+// 	close(fd[0]);
+// 	return ;
+
+// }
+
+// int	here_doc(t_mlist *m)
+// {
+// 	int	fd[2];
+// 	int	lim_len;
+// 	char	*line;
+
+// 	if (pipe(fd) == -1)
+// 		pipex_error(PIPE_ERR, m);
+// 	lim_len = ft_strlen(m->limiter); 
+// 	while (1)
+// 	{
+// 		line = get_next_line(STDIN_FILENO);
+// 		if (ft_strncmp(line, m->limiter, lim_len) == 0)
+// 		{
+// 			free(line);
+// 			close(fd[1]); //do i close this or keep it open?
+// 		}
+// 		write(fd[1], line, ft_strlen(line));
+// 		free(line);
+// 	}
+// 	return (fd[0]);
+// }
+
+//send str to an fd 

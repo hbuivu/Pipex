@@ -1,0 +1,8 @@
+pikachu: command not found
+pikachu: command not found
+
+wc: invalid option -- 'z'
+Try 'wc --help' for more information.
+
+-bash: file3: No such file or directory
+./
