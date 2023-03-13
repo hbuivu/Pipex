@@ -6,7 +6,7 @@
 /*   By: hbui-vu <hbui-vu@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/13 10:11:38 by hbui-vu           #+#    #+#             */
-/*   Updated: 2023/03/13 10:11:38 by hbui-vu          ###   ########.fr       */
+/*   Updated: 2023/03/13 13:35:06 by hbui-vu          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,20 +34,19 @@ char	*here_doc(t_mlist *m)
 	str = NULL;
 	temp = NULL;
 	new_str = NULL;
-	lim_len = ft_strlen(m->limiter);
 	while (1)
 	{
 		temp = get_next_line(STDIN_FILENO);
-		if (ft_strncmp(temp, m->limiter, lim_len) == 0)
+		if (ft_strncmp(temp, m->limiter, m->lim_len) == 0)
 			break ;
 		if (!str)
 			str = init_str(temp, m);
 		else
 		{
 			new_str = ft_strjoin(str, temp);
-			free (str);
-			free (temp);
-			str = new_str; 
+			free(str);
+			free(temp);
+			str = new_str;
 		}
 	}
 	free(temp);
@@ -65,4 +64,17 @@ int	here_doc_fd(t_mlist *m)
 	write(fd[1], str, ft_strlen(str));
 	close(fd[1]);
 	return (fd[0]);
+}
+
+void	fill_heredoc_mlist(t_mlist *m, int argv, char **argc)
+{
+	m->num_cmds = argv - 4;
+	m->limiter = ft_strjoin_char(argc[2], NULL, '\n');
+	if (!m->limiter)
+		pipex_error(MALLOC_ERR, m, NULL);
+	m->lim_len = ft_strlen(m->limiter);
+	m->file1 = here_doc_fd(m);
+	m->file2 = open(argc[argv - 1], O_CREAT | O_RDWR | O_APPEND, 0666);
+	if (m->file1 == -1 || m->file2 == -1)
+		pipex_error(INVALID_FILE, m, NULL);
 }

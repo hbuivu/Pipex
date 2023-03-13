@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   bonus_pipex.h                                      :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: hbui-vu <hbui-vu@student.42.fr>            +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/03/13 13:41:01 by hbui-vu           #+#    #+#             */
+/*   Updated: 2023/03/13 13:42:07 by hbui-vu          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #ifndef BONUS_PIPEX_H
 # define BONUS_PIPEX_H
 
@@ -14,7 +26,7 @@ enum	e_perrors
 	NO_PATH,
 	NO_FILE,
 	INVALID_FILE,
-	MALLOC_ERR, 
+	MALLOC_ERR,
 	PIPE_ERR,
 	FORK_ERR,
 	EXEC_ERR,
@@ -26,13 +38,13 @@ enum	e_perrors
 	INVALID_HEREDOC_ARG
 };
 
-typedef struct	execve_list
+typedef struct execve_list
 {
 	char		*path;
 	char		**commands;
 }	t_exec;
 
-typedef struct	master_list
+typedef struct master_list
 {
 	t_exec	*exec_list;
 	int		no_path;
@@ -41,18 +53,13 @@ typedef struct	master_list
 	int		file2;
 	int		num_cmds;
 	char	*limiter;
+	int		lim_len;
 }	t_mlist;
 
 void	free_mlist(t_mlist *m);
 void	pipex_error(int err, t_mlist *m, char *str);
 t_mlist	*init_mlist(int argv, char **argc, char **envp, int hd);
 int		here_doc_fd(t_mlist *m);
-
-
-void	print_splitlist(char **list);
-void		print_execlist(t_exec *e, int limit);
-void	print_mlist(t_mlist *m);
-void	print_file(int fd);
-
+void	fill_heredoc_mlist(t_mlist *m, int argv, char **argc);
 
 #endif

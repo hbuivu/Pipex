@@ -1,28 +1,40 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   pipex.c                                            :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: hbui-vu <hbui-vu@student.42.fr>            +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/03/13 13:43:15 by hbui-vu           #+#    #+#             */
+/*   Updated: 2023/03/13 13:43:17 by hbui-vu          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "pipex.h"
 
 void	child1(int *fd, t_mlist *m, char **envp)
 {
-		dup2(fd[1], STDOUT_FILENO);
-		if (close(fd[0]) == -1)
-			pipex_error(CLOSE_ERR, m);
-		if (close(fd[1]) == -1)
-			pipex_error(CLOSE_ERR, m);
-		execve(m->exec_list[0].path, m->exec_list[0].commands, envp);
-		pipex_error(EXEC_ERR, m);
+	dup2(fd[1], STDOUT_FILENO);
+	if (close(fd[0]) == -1)
+		pipex_error(CLOSE_ERR, m);
+	if (close(fd[1]) == -1)
+		pipex_error(CLOSE_ERR, m);
+	execve(m->exec_list[0].path, m->exec_list[0].commands, envp);
+	pipex_error(EXEC_ERR, m);
 }
 
 void	child2(int *fd, t_mlist *m, char **envp)
 {
-		if (dup2(fd[0], STDIN_FILENO) < 0) 
-			pipex_error(DUP_ERR, m); 
-		if (dup2(m->file2, STDOUT_FILENO) < 0)
-			pipex_error(DUP_ERR, m);
-		if (close(fd[0]) == -1)
-			pipex_error(CLOSE_ERR, m);
-		if (close(fd[1]) == -1)
-			pipex_error(CLOSE_ERR, m);
-		execve(m->exec_list[1].path, m->exec_list[1].commands, envp);
-		pipex_error(EXEC_ERR, m);
+	if (dup2(fd[0], STDIN_FILENO) < 0)
+		pipex_error(DUP_ERR, m);
+	if (dup2(m->file2, STDOUT_FILENO) < 0)
+		pipex_error(DUP_ERR, m);
+	if (close(fd[0]) == -1)
+		pipex_error(CLOSE_ERR, m);
+	if (close(fd[1]) == -1)
+		pipex_error(CLOSE_ERR, m);
+	execve(m->exec_list[1].path, m->exec_list[1].commands, envp);
+	pipex_error(EXEC_ERR, m);
 }
 
 void	simple_pipex(t_mlist *m, char **envp)
@@ -67,4 +79,3 @@ int	main(int argv, char **argc, char **envp)
 	free_mlist(m);
 	return (0);
 }
-

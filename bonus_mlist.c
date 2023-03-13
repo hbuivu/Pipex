@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   bonus_mlist.c                                      :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: hbui-vu <hbui-vu@student.42.fr>            +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/03/13 11:17:35 by hbui-vu           #+#    #+#             */
+/*   Updated: 2023/03/13 13:40:28 by hbui-vu          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "bonus_pipex.h"
 
 char	*ft_strjoin_char(char const *s1, char const *s2, char c)
@@ -36,15 +48,15 @@ char	*get_path(t_mlist *m, char *arg)
 		f = access(path, F_OK);
 		x = access(path, X_OK);
 		if (f == 0 && x == 0)
-			break;
+			break ;
 		else if (f == 0 && x < 0)
-			return (NULL); //ERROR
+			return (NULL);
 		free(path);
 		i++;
 	}
 	if (f == 0 && x == 0)
 		return (path);
-	return (NULL); //ERROR
+	return (NULL);
 }
 
 t_exec	*parse_paths(t_mlist *m, char **argc, int hd)
@@ -75,7 +87,6 @@ t_exec	*parse_paths(t_mlist *m, char **argc, int hd)
 	return (exec_list);
 }
 
-
 char	**get_env_paths(char **envp)
 {
 	int		i;
@@ -84,9 +95,9 @@ char	**get_env_paths(char **envp)
 	i = -1;
 	while (envp[++i])
 		if (ft_strncmp("PATH=", envp[i], 5) == 0)
-			break;
+			break ;
 	if (envp[i] == NULL)
-		return (NULL); 
+		return (NULL);
 	while (*(envp[i]) != '/')
 		envp[i]++;
 	env_paths = ft_split(envp[i], ':');
@@ -103,7 +114,7 @@ t_mlist	*init_mlist(int argv, char **argc, char **envp, int hd)
 	m = (t_mlist *)ft_calloc(1, sizeof(t_mlist));
 	if (!m)
 		pipex_error(MALLOC_ERR, m, NULL);
-	m->env_paths = get_env_paths(envp); 
+	m->env_paths = get_env_paths(envp);
 	if (!m->env_paths)
 		pipex_error(NO_ENV_PATH, m, NULL);
 	if (hd == 0)
@@ -113,18 +124,11 @@ t_mlist	*init_mlist(int argv, char **argc, char **envp, int hd)
 		if (m->file1 == -1)
 			pipex_error(NO_FILE, m, argc[1]);
 		m->file2 = open(argc[argv - 1], O_CREAT | O_RDWR | O_TRUNC, 0666);
+		if (m->file2 == -1)
+			pipex_error(INVALID_FILE, m, NULL);
 	}
 	else
-	{
-		m->num_cmds = argv - 4;
-		m->limiter = ft_strjoin_char(argc[2], NULL, '\n');
-		if (!m->limiter)
-			pipex_error(MALLOC_ERR, m, NULL);
-		m->file1 = here_doc_fd(m);
-		m->file2 = open(argc[argv - 1], O_CREAT | O_RDWR | O_APPEND, 0666);
-	}
-	if (m->file1 == -1 || m->file2 == -1)
-		pipex_error(INVALID_FILE, m, NULL);
+		fill_heredoc_mlist(m);
 	m->exec_list = parse_paths(m, argc, hd);
 	return (m);
 }

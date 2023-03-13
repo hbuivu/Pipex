@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   mlist.c                                            :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: hbui-vu <hbui-vu@student.42.fr>            +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/03/13 13:42:42 by hbui-vu           #+#    #+#             */
+/*   Updated: 2023/03/13 13:43:02 by hbui-vu          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "pipex.h"
 
 char	*ft_strjoin_char(char const *s1, char const *s2, char c)
@@ -36,7 +48,7 @@ char	*get_path(t_mlist *m, char *arg)
 		f = access(path, F_OK);
 		x = access(path, X_OK);
 		if (f == 0 && x == 0)
-			break;
+			break ;
 		else if (f == 0 && x < 0)
 		{
 			free(path);
@@ -83,9 +95,9 @@ char	**get_env_paths(char **envp)
 	i = -1;
 	while (envp[++i])
 		if (ft_strncmp("PATH=", envp[i], 5) == 0)
-			break;
+			break ;
 	if (envp[i] == NULL)
-		return (NULL); 
+		return (NULL);
 	while (*(envp[i]) != '/')
 		envp[i]++;
 	env_paths = ft_split(envp[i], ':');
@@ -103,7 +115,7 @@ t_mlist	*init_mlist(int argv, char **argc, char **envp)
 	if (!m)
 		pipex_error(MALLOC_ERR, m);
 	m->num_cmds = argv - 3;
-	m->env_paths = get_env_paths(envp); 
+	m->env_paths = get_env_paths(envp);
 	if (!m->env_paths)
 		pipex_error(NO_ENV_PATH, m);
 	m->exec_list = parse_paths(m, argc);

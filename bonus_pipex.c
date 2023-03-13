@@ -73,16 +73,15 @@ void	pipex(t_mlist *m, char **envp)
 
 int	main(int argv, char **argc, char **envp)
 {
-	t_mlist	*m;
-	int		hd; 
+	t_mlist *m;
+	int hd;
 
 	m = NULL;
 	hd = 0;
 	if (ft_strncmp(argc[1], "here_doc", 9) == 0)
 		hd = 1;
-	else 
-		if (access(argc[1], F_OK) < 0 || access(argc[1], R_OK) < 0)
-			pipex_error(NO_FILE, m, argc[1]);
+	else if (access(argc[1], F_OK) < 0 || access(argc[1], R_OK) < 0)
+		pipex_error(NO_FILE, m, argc[1]);
 	if (hd == 0 && argv < 5)
 		pipex_error(INVALID_ARG, m, NULL);
 	else if (hd == 1 && argv < 6)

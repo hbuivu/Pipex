@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   error.c                                            :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: hbui-vu <hbui-vu@student.42.fr>            +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/03/13 13:43:34 by hbui-vu           #+#    #+#             */
+/*   Updated: 2023/03/13 13:43:47 by hbui-vu          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "bonus_pipex.h"
 
 void	return_err_message(int err)
@@ -21,7 +33,7 @@ void	return_err_message(int err)
 	else if (err == COMMAND_ERR)
 		perror("Command not found"); //check later
 	else if (err == CLOSE_ERR)
-		perror("close error"); 
+		perror("close error");
 	else if (err == INVALID_ARG) //also need the err for heredoc
 		ft_putstr_fd("usage: ./pipex file 1 com1 com2 file2\n", 2);
 	else if (err == INVALID_HEREDOC_ARG)

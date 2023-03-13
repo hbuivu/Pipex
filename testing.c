@@ -13,9 +13,9 @@ void	print_splitlist(char **list)
 	printf("\n");
 }
 
-void		print_execlist(t_exec *e, int limit)
+void	print_execlist(t_exec *e, int limit)
 {
-	int i;
+	int	i;
 
 	i = 0;
 	while (i < limit && e)
@@ -36,7 +36,6 @@ void	print_mlist(t_mlist *m)
 	printf("EXEC LIST\n");
 	print_execlist(m->exec_list, m->num_cmds);
 	printf("LIMITER: %s\n", m->limiter);
-	
 }
 
 void	print_file(int fd)
