@@ -88,9 +88,11 @@ void	free_mlist(t_mlist *m)
 void	pipex_error(int err, t_mlist *m, char *str)
 {
 	if (err == NO_PATH)
-		ft_printf_err("%s: command not found\n", str);
+		// ft_printf_err("%s: command not found\n", str);
+		printf("%s: command not found\n", str);
 	else if (err == NO_FILE)
-		ft_printf_err("-bash: %s: No such file or directory\n", str);
+		// ft_printf_err("-bash: %s: No such file or directory\n", str);
+		printf("-bash: %s: No such file or directory\n", str);
 	else
 	{
 		return_err_message(err);

@@ -70,6 +70,7 @@ void	exec_command(char *command, t_mlist *m);
 char	**get_env_paths(char **envp);
 char	**get_type_commands(char *command, t_mlist *m);
 int		detect_alnum(char *str);
+void	free_splitlist(char **list);
 
 void	print_file(int fd);
 void	print_mlist(t_mlist *m);

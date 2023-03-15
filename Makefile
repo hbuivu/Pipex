@@ -45,6 +45,7 @@ clean:
 
 fclean: clean
 	$(MAKE) fclean -C $(LIBFT_DIR)
+	$(MAKE) fclean -C $(FT_PRINTF_DIR)
 	rm -rf $(NAME)
 	rm -rf $(BNAME)
 

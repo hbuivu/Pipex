@@ -64,7 +64,7 @@ char	**get_type_commands(char *command, t_mlist *m)
 		pipex_error(MALLOC_ERR, m, NULL);
 	free(type_str);
 	free(type_args);
-	free(primary_com);
+	free_splitlist(primary_com);
 	return(ret_args);
 }
 
