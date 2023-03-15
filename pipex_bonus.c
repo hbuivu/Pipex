@@ -1,4 +1,4 @@
-#include "bonus_pipex.h"
+#include "pipex.h"
 
 void	child_process(int i, int (*fd)[2], t_mlist *m, char **envp)
 {
@@ -49,10 +49,7 @@ void	pipex(t_mlist *m, char **envp)
 	int	i;
 
 	if (dup2(m->file1, STDIN_FILENO) == -1)
-	{
-		printf("sending file to stdin\n");
 		pipex_error(DUP_ERR, m, NULL);
-	}
 	if (close(m->file1) == -1)
 		pipex_error(CLOSE_ERR, m, NULL);
 	i = -1;
@@ -77,21 +74,16 @@ int	main(int argv, char **argc, char **envp)
 	int hd;
 
 	m = NULL;
+	if (argv < 2)
+		pipex_error(INVALID_ARG, m, NULL);
 	hd = 0;
 	if (ft_strncmp(argc[1], "here_doc", 9) == 0)
 		hd = 1;
-	else if (access(argc[1], F_OK) < 0 || access(argc[1], R_OK) < 0)
-		pipex_error(NO_FILE, m, argc[1]);
 	if (hd == 0 && argv < 5)
 		pipex_error(INVALID_ARG, m, NULL);
 	else if (hd == 1 && argv < 6)
 		pipex_error(INVALID_HEREDOC_ARG, m, NULL);
 	m = init_mlist(argv, argc, envp, hd);
-	if (m->no_path == 1)
-	{
-		free_mlist(m);
-		exit(1);
-	}
 	pipex(m, envp);
 	free_mlist(m);
 	return (0);

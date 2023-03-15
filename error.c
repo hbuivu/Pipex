@@ -10,31 +10,27 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "bonus_pipex.h"
+#include "pipex.h"
 
 void	return_err_message(int err)
 {
 	if (err == NO_ENV_PATH)
 		ft_putstr_fd("PATH environmental variable unavailable", 2);
-	// else if (err == NO_PATH)
-	// 	perror("Path not found"); //edit this
-	else if (err == INVALID_FILE)
-		perror("Invalid file");
+	else if (err == OPEN_ERR)
+		perror("Open error");
 	else if (err == MALLOC_ERR)
 		perror("Malloc error");
 	else if (err == PIPE_ERR)
 		perror("Pipe error");
 	else if (err == FORK_ERR)
 		perror("Fork error");
-	// else if (err == EXEC_ERR)
-	// 	perror("exec error");
+	else if (err == EXEC_ERR)
+		perror("exec error");
 	else if (err == DUP_ERR)
 		perror("dup2 error");
-	else if (err == COMMAND_ERR)
-		perror("Command not found"); //check later
 	else if (err == CLOSE_ERR)
 		perror("close error");
-	else if (err == INVALID_ARG) //also need the err for heredoc
+	else if (err == INVALID_ARG) 
 		ft_putstr_fd("usage: ./pipex file 1 com1 com2 file2\n", 2);
 	else if (err == INVALID_HEREDOC_ARG)
 		ft_putstr_fd("usage: ./pipex heredoc LIMITER cmd cmd1 file\n", 2);
@@ -87,19 +83,14 @@ void	free_mlist(t_mlist *m)
 void	pipex_error(int err, t_mlist *m, char *str)
 {
 	if (err == NO_PATH)
-	{
 		ft_printf("%s: command not found\n", str);
-		m->no_path = 1;
-	}
+	else if (err == NO_FILE)
+		ft_printf("-bash: %s: No such file or directory\n", str);
 	else
 	{
-		if (err == NO_FILE)
-			ft_printf("-bash: %s: No such file or directory\n", str);
-		else
-			return_err_message(err);
+		return_err_message(err);
 		if (m)
 			free_mlist(m);
 		exit(1);
 	}
-	return ;
 }

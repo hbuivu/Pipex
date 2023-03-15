@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   mlist.c                                            :+:      :+:    :+:   */
+/*   bonus_mlist.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: hbui-vu <hbui-vu@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/03/13 13:42:42 by hbui-vu           #+#    #+#             */
-/*   Updated: 2023/03/13 13:43:02 by hbui-vu          ###   ########.fr       */
+/*   Created: 2023/03/13 11:17:35 by hbui-vu           #+#    #+#             */
+/*   Updated: 2023/03/13 13:40:28 by hbui-vu          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,6 +42,12 @@ char	*get_path(t_mlist *m, char *arg)
 	char	*path;
 
 	i = 0;
+	if (access(arg, F_OK) == 0 && access(arg, X_OK) == 0)
+	{
+		path = (char *)ft_calloc(ft_strlen(arg) + 1, sizeof(char));
+		ft_strlcpy(path, arg, ft_strlen(arg) + 1);
+		return (path);
+	}
 	while (m->env_paths[i])
 	{
 		path = ft_strjoin_char(m->env_paths[i], arg, '/');
@@ -50,10 +56,7 @@ char	*get_path(t_mlist *m, char *arg)
 		if (f == 0 && x == 0)
 			break ;
 		else if (f == 0 && x < 0)
-		{
-			free(path);
-			pipex_error(NO_PATH, m);
-		}
+			return (NULL);
 		free(path);
 		i++;
 	}
@@ -62,7 +65,7 @@ char	*get_path(t_mlist *m, char *arg)
 	return (NULL);
 }
 
-t_exec	*parse_paths(t_mlist *m, char **argc)
+t_exec	*parse_paths(t_mlist *m, char **argc, int hd)
 {
 	int		a;
 	int		i;
@@ -70,17 +73,25 @@ t_exec	*parse_paths(t_mlist *m, char **argc)
 
 	exec_list = (t_exec *)ft_calloc(m->num_cmds, sizeof(t_exec));
 	if (!exec_list)
-		pipex_error(MALLOC_ERR, m);
-	a = 2;
+		pipex_error(MALLOC_ERR, m, NULL);
+	if (hd == 0)
+		a = 2;
+	else
+		a = 3;
 	i = 0;
 	while (i < m->num_cmds)
 	{
-		exec_list[i].commands = ft_split(argc[a], ' ');
-		if (!exec_list[i].commands)
-			pipex_error(MALLOC_ERR, m);
-		exec_list[i].path = get_path(m, exec_list[i].commands[0]);
-		if (!exec_list[i].path)
-			pipex_error(NO_PATH, m);
+		if (check_command(argc[a], m) == 1)
+			populate_builtin_comm(argc[a], m, i);
+		else
+		{
+			exec_list[i].commands = ft_split(argc[a], ' ');
+			if (!exec_list[i].commands)
+				pipex_error(MALLOC_ERR, m, NULL);
+			exec_list[i].path = get_path(m, exec_list[i].commands[0]);
+			if (!exec_list[i].path)
+				pipex_error(NO_PATH, m, exec_list[i].commands[0]);
+		}
 		i++;
 		a++;
 	}
@@ -106,22 +117,29 @@ char	**get_env_paths(char **envp)
 	return (env_paths);
 }
 
-t_mlist	*init_mlist(int argv, char **argc, char **envp)
+t_mlist	*init_mlist(int argv, char **argc, char **envp, int hd)
 {
 	t_mlist	*m;
 
 	m = NULL;
 	m = (t_mlist *)ft_calloc(1, sizeof(t_mlist));
 	if (!m)
-		pipex_error(MALLOC_ERR, m);
-	m->num_cmds = argv - 3;
+		pipex_error(MALLOC_ERR, m, NULL);
 	m->env_paths = get_env_paths(envp);
 	if (!m->env_paths)
-		pipex_error(NO_ENV_PATH, m);
-	m->exec_list = parse_paths(m, argc);
-	m->file1 = open(argc[1], O_RDONLY);
-	m->file2 = open(argc[argv - 1], O_CREAT | O_RDWR | O_TRUNC, 0666);
-	if (m->file1 < 0 || m->file2 < 0)
-		pipex_error(NO_FILE, m);
+		pipex_error(NO_ENV_PATH, m, NULL);
+	if (hd == 0)
+	{
+		m->num_cmds = argv - 3;
+		m->file1 = open(argc[1], O_RDONLY);
+		if (m->file1 == -1)
+			pipex_error(NO_FILE, m, argc[1]);
+		m->file2 = open(argc[argv - 1], O_CREAT | O_RDWR | O_TRUNC, 0666);
+		if (m->file2 == -1)
+			pipex_error(OPEN_ERR, m, NULL);
+	}
+	else
+		fill_heredoc_mlist(m, argv, argc);
+	m->exec_list = parse_paths(m, argc, hd);
 	return (m);
 }

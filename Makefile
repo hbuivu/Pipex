@@ -12,8 +12,8 @@
 
 NAME = pipex
 
-SRCS = error.c mlist.c pipex.c
-BSRCS = error.c bonus_mlist.c bonus_pipex.c bonus_heredoc.c
+SRCS = error.c mlist.c heredoc.c pipex.c builtin_commands.c testing.c
+BSRCS = error.c mlist.c heredoc.c pipex_bonus.c
 
 CFLAGS = -Wall -Wextra -Werror
 
@@ -32,14 +32,12 @@ $(NAME): $(OBJS)
 	$(MAKE) -C $(FT_PRINTF_DIR)
 	$(CC) $(OBJS) $(LIBS) $(CFLAGS) -o $(NAME)
 
-$(NAME): $(BOBJS)
+all: $(NAME)
+
+bonus: $(NAME) $(BOBJS)
 	$(MAKE) -C $(LIBFT_DIR)
 	$(MAKE) -C $(FT_PRINTF_DIR)
 	$(CC) $(BOBJS) $(LIBS) $(CFLAGS) -o $(NAME)
-
-all: $(NAME)
-
-bonus: $(BNAME)
 		
 clean:
 	$(MAKE) clean -C $(LIBFT_DIR)

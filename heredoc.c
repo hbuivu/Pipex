@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "bonus_pipex.h"
+#include "pipex.h"
 
 char	*init_str(char *temp, t_mlist *m)
 {
@@ -29,7 +29,6 @@ char	*here_doc(t_mlist *m)
 	char	*temp;
 	char	*str;
 	char	*new_str;
-	int		lim_len;
 
 	str = NULL;
 	temp = NULL;
@@ -76,5 +75,5 @@ void	fill_heredoc_mlist(t_mlist *m, int argv, char **argc)
 	m->file1 = here_doc_fd(m);
 	m->file2 = open(argc[argv - 1], O_CREAT | O_RDWR | O_APPEND, 0666);
 	if (m->file1 == -1 || m->file2 == -1)
-		pipex_error(INVALID_FILE, m, NULL);
+		pipex_error(OPEN_ERR, m, NULL);
 }

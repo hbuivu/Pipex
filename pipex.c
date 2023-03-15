@@ -1,81 +1,84 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   pipex.c                                            :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: hbui-vu <hbui-vu@student.42.fr>            +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/03/13 13:43:15 by hbui-vu           #+#    #+#             */
-/*   Updated: 2023/03/13 13:43:17 by hbui-vu          ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
 #include "pipex.h"
 
-void	child1(int *fd, t_mlist *m, char **envp)
+void	child_process(int i, int (*fd)[2], t_mlist *m, char **envp)
 {
-	dup2(fd[1], STDOUT_FILENO);
-	if (close(fd[0]) == -1)
-		pipex_error(CLOSE_ERR, m);
-	if (close(fd[1]) == -1)
-		pipex_error(CLOSE_ERR, m);
-	execve(m->exec_list[0].path, m->exec_list[0].commands, envp);
-	pipex_error(EXEC_ERR, m);
+	int	j;
+
+	if (i == 0 && dup2(fd[i][1], STDOUT_FILENO) == -1)
+		pipex_error(DUP_ERR, m, NULL);
+	if (i > 0 && dup2(fd[i - 1][0], STDIN_FILENO) == -1)
+		pipex_error(DUP_ERR, m, NULL);
+	if (i == m->num_cmds - 1 && dup2(m->file2, STDOUT_FILENO) == -1)
+		pipex_error(DUP_ERR, m, NULL);
+	if (i != m->num_cmds - 1 && i > 0 && dup2(fd[i][1], STDOUT_FILENO) == -1)
+		pipex_error(DUP_ERR, m, NULL);
+	j = 0;
+	while (j < m->num_cmds - 1)
+	{
+		close(fd[j][0]);
+		close(fd[j][1]);
+		j++;
+	}
+	execve(m->exec_list[i].path, m->exec_list[i].commands, envp);
+	pipex_error(EXEC_ERR, m, NULL);
 }
 
-void	child2(int *fd, t_mlist *m, char **envp)
+void	parent_process(int (*fd)[2], int *pid, t_mlist *m)
 {
-	if (dup2(fd[0], STDIN_FILENO) < 0)
-		pipex_error(DUP_ERR, m);
-	if (dup2(m->file2, STDOUT_FILENO) < 0)
-		pipex_error(DUP_ERR, m);
-	if (close(fd[0]) == -1)
-		pipex_error(CLOSE_ERR, m);
-	if (close(fd[1]) == -1)
-		pipex_error(CLOSE_ERR, m);
-	execve(m->exec_list[1].path, m->exec_list[1].commands, envp);
-	pipex_error(EXEC_ERR, m);
+	int	i;
+
+	i = 0;
+	while (i < m->num_cmds - 1)
+	{
+		close(fd[i][0]);
+		close(fd[i][1]);
+		i++;
+	}
+	i = 0;
+	while (i < m->num_cmds)
+	{
+		waitpid(pid[i], NULL, 0);
+		i++;
+	}
 }
 
-void	simple_pipex(t_mlist *m, char **envp)
+void	pipex(t_mlist *m, char **envp)
 {
-	int	fd[2];
-	int	pid1;
-	int	pid2;
+	int	fd[m->num_cmds - 1][2];
+	int	pid[m->num_cmds];
+	int	i;
 
-	if (dup2(m->file1, STDIN_FILENO) < 0)
-		pipex_error(DUP_ERR, m);
-	if (pipe(fd) < 0)
-		pipex_error(PIPE_ERR, m);
-	pid1 = fork();
-	if (pid1 < 0)
-		pipex_error(FORK_ERR, m);
-	if (pid1 == 0)
-		child1(fd, m, envp);
-	pid2 = fork();
-	if (pid2 < 0)
-		pipex_error(FORK_ERR, m);
-	if (pid2 == 0)
-		child2(fd, m, envp);
-	if (close(fd[0]) == -1)
-		pipex_error(CLOSE_ERR, m);
-	if (close(fd[1]) == -1)
-		pipex_error(CLOSE_ERR, m);
-	waitpid(pid1, NULL, 0);
-	waitpid(pid2, NULL, 0);
+	if (dup2(m->file1, STDIN_FILENO) == -1)
+		pipex_error(DUP_ERR, m, NULL);
+	if (close(m->file1) == -1)
+		pipex_error(CLOSE_ERR, m, NULL);
+	i = -1;
+	while (++i < m->num_cmds - 1)
+		if (pipe(fd[i]) == -1)
+			pipex_error(PIPE_ERR, m, NULL);
+	i = -1;
+	while (++i < m->num_cmds)
+	{
+		pid[i] = fork();
+		if (pid[i] == -1)
+			pipex_error(FORK_ERR, m, NULL);
+		else if (pid[i] == 0)
+			child_process(i, fd, m, envp);
+	}
+	parent_process(fd, pid, m);
 }
 
-int	main(int argv, char **argc, char **envp)
-{
-	t_mlist	*m;
+// int	main(int argv, char **argc, char **envp)
+// {
+// 	t_mlist *m;
+// 	int hd;
 
-	m = NULL;
-	if (argv != 5)
-		pipex_error(INVALID_ARG, m);
-	if (access(argc[1], F_OK) < 0 || access(argc[1], R_OK) < 0)
-		pipex_error(NO_FILE, m);
-	m = init_mlist(argv, argc, envp);
-	simple_pipex(m, envp);
-	free_mlist(m);
-	return (0);
-}
+// 	m = NULL;
+// 	hd = 0;
+// 	if (argv != 5)
+// 		pipex_error(INVALID_ARG, m, NULL);
+// 	m = init_mlist(argv, argc, envp, hd);
+// 	pipex(m, envp);
+// 	free_mlist(m);
+// 	return (0);
+// }
