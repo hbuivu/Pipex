@@ -10,19 +10,14 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef FT_PRINTF_H
-# define FT_PRINTF_H
+#ifndef FT_PRINTF_ERR_H
+# define FT_PRINTF_ERR_H
 
 # include <unistd.h>
 # include <stdarg.h>
 
 int	ft_putchar(int c);
 int	ft_putstr(char *str);
-int	ft_putnbr(int n);
-int	ft_putunbr(unsigned int n);
-int	ft_puthex(unsigned int n);
-int	ft_puthexcap(unsigned int n);
-int	ft_putmem(unsigned long long i);
-int	ft_printf(const char *str, ...);
+int	ft_printf_err(const char *str, ...);
 
 #endif

@@ -6,7 +6,7 @@
 #    By: hbui-vu <hbui-vu@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/02/23 13:26:57 by hbui-vu           #+#    #+#              #
-#    Updated: 2023/02/23 13:41:47 by hbui-vu          ###   ########.fr        #
+#    Updated: 2023/03/15 15:31:56 by hbui-vu          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -20,9 +20,9 @@ CFLAGS = -Wall -Wextra -Werror
 CC = cc
 
 LIBFT_DIR = ./libft
-FT_PRINTF_DIR = ./ft_printf
+FT_PRINTF_DIR = ./ft_printf_err
 
-LIBS = ./libft/libft.a ./ft_printf/libftprintf.a
+LIBS = ./libft/libft.a ./ft_printf_err/ftprintf_err.a
 
 OBJS = $(SRCS:.c=.o)
 BOBJS = $(BSRCS: .c=.o)

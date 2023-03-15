@@ -10,10 +10,9 @@
 #                                                                              #
 # **************************************************************************** #
 
-NAME = libftprintf.a
+NAME = ftprintf_err.a
 
-SRCS = ft_putchar.c ft_putstr.c ft_putnbr.c ft_putunbr.c ft_puthex.c \
-		ft_puthexcap.c ft_putmem.c ft_printf.c
+SRCS = ft_putchar.c ft_putstr.c ft_printf_err.c
 
 CC = gcc
 CFLAGS = -Wall -Wextra -Werror

@@ -33,6 +33,7 @@ void	print_mlist(t_mlist *m)
 	printf("NUM_COMMANDS: %i\n", m->num_cmds);
 	printf("PATHS: ");
 	print_splitlist(m->env_paths);
+	printf("SHELL PATH: %s\n", m->sh_path);
 	printf("EXEC LIST\n");
 	print_execlist(m->exec_list, m->num_cmds);
 	printf("LIMITER: %s\n", m->limiter);

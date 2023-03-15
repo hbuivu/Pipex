@@ -6,7 +6,7 @@
 /*   By: hbui-vu <hbui-vu@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/13 13:43:34 by hbui-vu           #+#    #+#             */
-/*   Updated: 2023/03/13 13:43:47 by hbui-vu          ###   ########.fr       */
+/*   Updated: 2023/03/15 16:42:18 by hbui-vu          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,9 +57,12 @@ void	free_execlist(t_mlist *m, t_exec *exec_list)
 	i = 0;
 	while (i < m->num_cmds)
 	{
-		free(exec_list[i].path);
+		if (exec_list[i].path)
+			free(exec_list[i].path);
 		if (exec_list[i].commands)
 			free_splitlist(exec_list[i].commands);
+		if (exec_list[i].type_commands)
+			free_splitlist(exec_list[i].type_commands);
 		i++;
 	}
 	free(exec_list);
@@ -71,6 +74,8 @@ void	free_mlist(t_mlist *m)
 		free_execlist(m, m->exec_list);
 	if (m->env_paths)
 		free_splitlist(m->env_paths);
+	if (m->sh_path)
+		free(m->sh_path);
 	if (m->file1 >= 0)
 		close(m->file1);
 	if (m->file2 >= 0)
@@ -83,9 +88,9 @@ void	free_mlist(t_mlist *m)
 void	pipex_error(int err, t_mlist *m, char *str)
 {
 	if (err == NO_PATH)
-		ft_printf("%s: command not found\n", str);
+		ft_printf_err("%s: command not found\n", str);
 	else if (err == NO_FILE)
-		ft_printf("-bash: %s: No such file or directory\n", str);
+		ft_printf_err("-bash: %s: No such file or directory\n", str);
 	else
 	{
 		return_err_message(err);

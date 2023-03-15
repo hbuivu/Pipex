@@ -23,9 +23,28 @@ void	child_process(int i, int (*fd)[2], t_mlist *m, char **envp)
 	pipex_error(EXEC_ERR, m, NULL);
 }
 
-void	parent_process(int (*fd)[2], int *pid, t_mlist *m)
+// void	parent_process(int (*fd)[2], int *pid, t_mlist *m)
+// {
+// 	int	i;
+
+// 	i = 0;
+// 	while (i < m->num_cmds - 1)
+// 	{
+// 		close(fd[i][0]);
+// 		close(fd[i][1]);
+// 		i++;
+// 	}
+// 	i = 0;
+// 	while (i < m->num_cmds)
+// 	{
+// 		waitpid(pid[i], NULL, 0);
+// 		i++;
+// 	}
+// }
+int	parent_process(int (*fd)[2], int *pid, t_mlist *m)
 {
 	int	i;
+	int	status;
 
 	i = 0;
 	while (i < m->num_cmds - 1)
@@ -37,9 +56,11 @@ void	parent_process(int (*fd)[2], int *pid, t_mlist *m)
 	i = 0;
 	while (i < m->num_cmds)
 	{
-		waitpid(pid[i], NULL, 0);
+		waitpid(pid[i], &status, 0);
 		i++;
 	}
+	if (WIFEXITED(status))
+		return (WEXITSTATUS(status));
 }
 
 void	pipex(t_mlist *m, char **envp)
@@ -47,6 +68,7 @@ void	pipex(t_mlist *m, char **envp)
 	int	fd[m->num_cmds - 1][2];
 	int	pid[m->num_cmds];
 	int	i;
+	int	status;
 
 	if (dup2(m->file1, STDIN_FILENO) == -1)
 		pipex_error(DUP_ERR, m, NULL);
@@ -65,20 +87,22 @@ void	pipex(t_mlist *m, char **envp)
 		else if (pid[i] == 0)
 			child_process(i, fd, m, envp);
 	}
-	parent_process(fd, pid, m);
+	status = parent_process(fd, pid, m);
+	return(status);
 }
 
-// int	main(int argv, char **argc, char **envp)
-// {
-// 	t_mlist *m;
-// 	int hd;
+int	main(int argc, char **argv, char **envp)
+{
+	t_mlist *m;
+	int hd;
 
-// 	m = NULL;
-// 	hd = 0;
-// 	if (argv != 5)
-// 		pipex_error(INVALID_ARG, m, NULL);
-// 	m = init_mlist(argv, argc, envp, hd);
-// 	pipex(m, envp);
-// 	free_mlist(m);
-// 	return (0);
-// }
+	m = NULL;
+	hd = 0;
+	if (argc != 5)
+		pipex_error(INVALID_ARG, m, NULL);
+	m = init_mlist(argc, argv, envp, hd);
+	print_mlist(m);
+	int status = pipex(m, envp);
+	free_mlist(m);
+	return(status);
+}

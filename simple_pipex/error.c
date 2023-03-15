@@ -76,5 +76,5 @@ void	pipex_error(int err, t_mlist *m)
 	return_err_message(err);
 	if (m)
 		free_mlist(m);
-	exit(1);
+	exit(128);
 }

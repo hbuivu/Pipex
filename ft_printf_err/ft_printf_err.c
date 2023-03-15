@@ -10,12 +10,11 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "ft_printf.h"
+#include "ft_printf_err.h"
 
 int	is_format(char c)
 {
-	if (c == 'c' || c == 's' || c == 'p' || c == 'd' || c == 'i' || c == 'u'
-		|| c == 'x' || c == 'X' || c == '%')
+	if (c == 'c' || c == 's')
 		return (1);
 	return (0);
 }
@@ -29,25 +28,10 @@ int	write_format(va_list ptr, char c)
 		count += ft_putchar((unsigned char)va_arg(ptr, int));
 	else if (c == 's')
 		count += ft_putstr(va_arg(ptr, char *));
-	else if (c == 'p')
-	{
-		count += ft_putstr("0x");
-		count += ft_putmem((unsigned long long)va_arg(ptr, void *));
-	}
-	else if (c == 'd' || c == 'i')
-		count += ft_putnbr(va_arg(ptr, int));
-	else if (c == 'u')
-		count += ft_putunbr(va_arg(ptr, unsigned int));
-	else if (c == 'x')
-		count += ft_puthex(va_arg(ptr, int));
-	else if (c == 'X')
-		count += ft_puthexcap(va_arg(ptr, int));
-	else if (c == '%')
-		count += ft_putchar('%');
 	return (count);
 }
 
-int	ft_printf(const char *str, ...)
+int	ft_printf_err(const char *str, ...)
 {
 	int		i;
 	int		count;

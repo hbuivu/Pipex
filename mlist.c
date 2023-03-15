@@ -1,16 +1,46 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   bonus_mlist.c                                      :+:      :+:    :+:   */
+/*   mlist.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: hbui-vu <hbui-vu@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/13 11:17:35 by hbui-vu           #+#    #+#             */
-/*   Updated: 2023/03/13 13:40:28 by hbui-vu          ###   ########.fr       */
+/*   Updated: 2023/03/15 17:17:57 by hbui-vu          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "pipex.h"
+
+int	detect_alnum(char *str)
+{
+	while (*str)
+	{
+		if (ft_isalnum(*str))
+			return (1);
+		str++;
+	}
+	return (0);
+}
+
+char	**get_env_paths(char **envp)
+{
+	int		i;
+	char	**env_paths;
+
+	i = -1;
+	while (envp[++i])
+		if (ft_strncmp("PATH=", envp[i], 5) == 0)
+			break ;
+	if (envp[i] == NULL)
+		return (NULL);
+	while (*(envp[i]) != '/')
+		envp[i]++;
+	env_paths = ft_split(envp[i], ':');
+	if (!env_paths)
+		return (NULL);
+	return (env_paths);
+}
 
 char	*ft_strjoin_char(char const *s1, char const *s2, char c)
 {
@@ -42,10 +72,13 @@ char	*get_path(t_mlist *m, char *arg)
 	char	*path;
 
 	i = 0;
+	if (!arg || !detect_alnum(arg))
+		return (NULL);
 	if (access(arg, F_OK) == 0 && access(arg, X_OK) == 0)
 	{
-		path = (char *)ft_calloc(ft_strlen(arg) + 1, sizeof(char));
-		ft_strlcpy(path, arg, ft_strlen(arg) + 1);
+		path = ft_strdup(arg);
+		if (!path)
+			pipex_error(MALLOC_ERR, m, NULL);
 		return (path);
 	}
 	while (m->env_paths[i])
@@ -65,7 +98,7 @@ char	*get_path(t_mlist *m, char *arg)
 	return (NULL);
 }
 
-t_exec	*parse_paths(t_mlist *m, char **argc, int hd)
+t_exec	*parse_paths(t_mlist *m, char **argc, int hd, char **envp)
 {
 	int		a;
 	int		i;
@@ -78,11 +111,14 @@ t_exec	*parse_paths(t_mlist *m, char **argc, int hd)
 		a = 2;
 	else
 		a = 3;
-	i = 0;
-	while (i < m->num_cmds)
+	i = -1;
+	while (++i < m->num_cmds)
 	{
-		if (check_command(argc[a], m) == 1)
-			populate_builtin_comm(argc[a], m, i);
+		//this technically does not need to be in the exec list but doing this to save space
+		//also it cannot be used inside of check_command function bc it needs to be freed
+		exec_list[i].type_commands = get_type_commands(argc[a], m);
+		if (check_command(exec_list[i].type_commands, m, envp) == 1)
+			parse_builtin_comm(argc[a], exec_list, i, m);
 		else
 		{
 			exec_list[i].commands = ft_split(argc[a], ' ');
@@ -92,29 +128,9 @@ t_exec	*parse_paths(t_mlist *m, char **argc, int hd)
 			if (!exec_list[i].path)
 				pipex_error(NO_PATH, m, exec_list[i].commands[0]);
 		}
-		i++;
 		a++;
 	}
 	return (exec_list);
-}
-
-char	**get_env_paths(char **envp)
-{
-	int		i;
-	char	**env_paths;
-
-	i = -1;
-	while (envp[++i])
-		if (ft_strncmp("PATH=", envp[i], 5) == 0)
-			break ;
-	if (envp[i] == NULL)
-		return (NULL);
-	while (*(envp[i]) != '/')
-		envp[i]++;
-	env_paths = ft_split(envp[i], ':');
-	if (!env_paths)
-		return (NULL);
-	return (env_paths);
 }
 
 t_mlist	*init_mlist(int argv, char **argc, char **envp, int hd)
@@ -128,6 +144,7 @@ t_mlist	*init_mlist(int argv, char **argc, char **envp, int hd)
 	m->env_paths = get_env_paths(envp);
 	if (!m->env_paths)
 		pipex_error(NO_ENV_PATH, m, NULL);
+	m->sh_path = get_path(m, "sh");
 	if (hd == 0)
 	{
 		m->num_cmds = argv - 3;
@@ -140,6 +157,6 @@ t_mlist	*init_mlist(int argv, char **argc, char **envp, int hd)
 	}
 	else
 		fill_heredoc_mlist(m, argv, argc);
-	m->exec_list = parse_paths(m, argc, hd);
+	m->exec_list = parse_paths(m, argc, hd, envp);
 	return (m);
 }
