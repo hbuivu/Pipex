@@ -1,5 +1,6 @@
 {
 	"files.associations": {
-		"ft_printf_err.h": "c"
+		"ft_printf_err.h": "c",
+		"locale": "c"
 	}
 }

@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   bonus_heredoc.c                                    :+:      :+:    :+:   */
+/*   heredoc.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: hbui-vu <hbui-vu@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/13 10:11:38 by hbui-vu           #+#    #+#             */
-/*   Updated: 2023/03/13 13:35:06 by hbui-vu          ###   ########.fr       */
+/*   Updated: 2023/03/16 13:52:24 by hbui-vu          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,7 +52,7 @@ char	*here_doc(t_mlist *m)
 	return (str);
 }
 
-int	here_doc_fd(t_mlist *m)
+int	heredoc_fd(t_mlist *m)
 {
 	int		fd[2];
 	char	*str;
@@ -72,7 +72,7 @@ void	fill_heredoc_mlist(t_mlist *m, int argv, char **argc)
 	if (!m->limiter)
 		pipex_error(MALLOC_ERR, m, NULL);
 	m->lim_len = ft_strlen(m->limiter);
-	m->file1 = here_doc_fd(m);
+	m->file1 = heredoc_fd(m);
 	m->file2 = open(argc[argv - 1], O_CREAT | O_RDWR | O_APPEND, 0666);
 	if (m->file1 == -1 || m->file2 == -1)
 		pipex_error(OPEN_ERR, m, NULL);

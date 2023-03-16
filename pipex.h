@@ -6,7 +6,7 @@
 /*   By: hbui-vu <hbui-vu@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/13 13:41:01 by hbui-vu           #+#    #+#             */
-/*   Updated: 2023/03/15 17:00:10 by hbui-vu          ###   ########.fr       */
+/*   Updated: 2023/03/16 13:48:11 by hbui-vu          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,22 +56,27 @@ typedef struct master_list
 	int		lim_len;
 }	t_mlist;
 
+/* error.c */
 void	free_mlist(t_mlist *m);
-void	pipex_error(int err, t_mlist *m, char *str);
-t_mlist	*init_mlist(int argv, char **argc, char **envp, int hd);
-int		here_doc_fd(t_mlist *m);
-void	fill_heredoc_mlist(t_mlist *m, int argv, char **argc);
-char	*ft_strjoin_char(char const *s1, char const *s2, char c);
-char	*get_path(t_mlist *m, char *arg);
-
-int		check_command(char **commands, t_mlist *m, char **envp);
-void	parse_builtin_comm(char *command, t_exec *exec_list, int i, t_mlist *m);
-void	exec_command(char *command, t_mlist *m);
-char	**get_env_paths(char **envp);
-char	**get_type_commands(char *command, t_mlist *m);
-int		detect_alnum(char *str);
 void	free_splitlist(char **list);
+void	pipex_error(int err, t_mlist *m, char *str);
 
+/* utils.c */
+char	*ft_strjoin_char(char const *s1, char const *s2, char c);
+int		detect_alnum(char *str);
+
+/* mlist.c */
+t_mlist	*init_mlist(int argv, char **argc, char **envp, int hd);
+
+/* heredoc.c */
+void	fill_heredoc_mlist(t_mlist *m, int argv, char **argc);
+
+/* builtin_commands.c */
+int		check_command(char **commands, t_mlist *m, char **envp);
+char	**get_type_commands(char *command, t_mlist *m);
+void	parse_builtin_comm(char *command, t_exec *exec_list, int i, t_mlist *m);
+
+/* testing.c */
 void	print_file(int fd);
 void	print_mlist(t_mlist *m);
 void	print_splitlist(char **list);

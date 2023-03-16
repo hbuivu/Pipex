@@ -6,14 +6,14 @@
 #    By: hbui-vu <hbui-vu@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/02/23 13:26:57 by hbui-vu           #+#    #+#              #
-#    Updated: 2023/03/15 15:31:56 by hbui-vu          ###   ########.fr        #
+#    Updated: 2023/03/16 14:09:39 by hbui-vu          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME = pipex
 
-SRCS = error.c mlist.c heredoc.c pipex.c builtin_commands.c testing.c
-BSRCS = error.c mlist.c heredoc.c pipex_bonus.c
+SRCS = error.c utils.c mlist.c heredoc.c builtin_commands.c pipex.c
+BSRCS = error.c utils.c mlist.c heredoc.c builtin_commands.c pipex_bonus.c
 
 CFLAGS = -Wall -Wextra -Werror
 
@@ -52,6 +52,3 @@ fclean: clean
 re: fclean all
 
 .PHONY: all clean fclean re
-
-# note: in linux, cc objs libs flags -o name
-# in mac, cc libs flags objs -o name

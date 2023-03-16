@@ -6,7 +6,7 @@
 /*   By: hbui-vu <hbui-vu@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/13 13:43:34 by hbui-vu           #+#    #+#             */
-/*   Updated: 2023/03/15 16:42:18 by hbui-vu          ###   ########.fr       */
+/*   Updated: 2023/03/16 12:24:12 by hbui-vu          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,7 @@ void	return_err_message(int err)
 		perror("dup2 error");
 	else if (err == CLOSE_ERR)
 		perror("close error");
-	else if (err == INVALID_ARG) 
+	else if (err == INVALID_ARG)
 		ft_putstr_fd("usage: ./pipex file 1 com1 com2 file2\n", 2);
 	else if (err == INVALID_HEREDOC_ARG)
 		ft_putstr_fd("usage: ./pipex heredoc LIMITER cmd cmd1 file\n", 2);
@@ -88,18 +88,16 @@ void	free_mlist(t_mlist *m)
 void	pipex_error(int err, t_mlist *m, char *str)
 {
 	if (err == NO_PATH)
-		// ft_printf_err("%s: command not found\n", str);
-		printf("%s: command not found\n", str);
+		ft_printf_err("%s: command not found\n", str);
 	else if (err == NO_FILE)
-		// ft_printf_err("-bash: %s: No such file or directory\n", str);
-		printf("-bash: %s: No such file or directory\n", str);
+		ft_printf_err("-bash: %s: No such file or directory\n", str);
 	else
 	{
-		// return_err_message(err);
+		return_err_message(err);
 		if (m)
 			free_mlist(m);
+		if (err == EXEC_ERR)
+			exit(127);
 		exit(1);
 	}
 }
-
-//127 - command not found

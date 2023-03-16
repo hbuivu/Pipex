@@ -19,10 +19,11 @@ int main(int argv, char **argc, char **envp)
 	// char *str = NULL;
 	// int	i = ft_printf_err("%s", str);
 	// printf("%i\n", i);
-	char *path = "/bin/sh";
-	char *args[5] = {"sh", "-c", "exit 5", NULL};
+	char *path = NULL;
+	char *args[3] = {"something", "something", NULL};
 	execve(path, args, envp);
+	printf("%s\n", strerror(errno));
 	printf("unsuccessful");
 }
 
-https://stackoverflow.com/questions/66201463/how-can-i-print-the-exit-status-inside-of-the-code
+// https://stackoverflow.com/questions/66201463/how-can-i-print-the-exit-status-inside-of-the-code

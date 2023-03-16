@@ -1,6 +1,29 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   pipex_bonus.c                                      :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: hbui-vu <hbui-vu@student.42.fr>            +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/03/16 12:48:34 by hbui-vu           #+#    #+#             */
+/*   Updated: 2023/03/16 14:08:20 by hbui-vu          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "pipex.h"
 
-void	child_process(int i, int (*fd)[2], t_mlist *m, char **envp)
+void	create_process_utils(int ***fd, int **pid, t_mlist *m)
+{
+	int	i;
+
+	*fd = (int **)ft_calloc(m->num_cmds - 1, sizeof(int *));
+	i = -1;
+	while (++i < m->num_cmds)
+		(*fd)[i] = (int *)ft_calloc(2, sizeof(int));
+	*pid = (int *)ft_calloc(m->num_cmds, sizeof(int));
+}
+
+void	child_process(int i, int **fd, t_mlist *m, char **envp)
 {
 	int	j;
 
@@ -23,9 +46,10 @@ void	child_process(int i, int (*fd)[2], t_mlist *m, char **envp)
 	pipex_error(EXEC_ERR, m, NULL);
 }
 
-void	parent_process(int (*fd)[2], int *pid, t_mlist *m)
+int	parent_process(int **fd, int *pid, t_mlist *m)
 {
 	int	i;
+	int	status;
 
 	i = 0;
 	while (i < m->num_cmds - 1)
@@ -37,17 +61,25 @@ void	parent_process(int (*fd)[2], int *pid, t_mlist *m)
 	i = 0;
 	while (i < m->num_cmds)
 	{
-		waitpid(pid[i], NULL, 0);
+		waitpid(pid[i], &status, 0);
 		i++;
 	}
+	free(pid);
+	i = -1;
+	while (++i < m->num_cmds)
+		free(fd[i]);
+	free(fd);
+	return (status);
 }
 
-void	pipex(t_mlist *m, char **envp)
+int	pipex(t_mlist *m, char **envp)
 {
-	int	fd[m->num_cmds - 1][2];
-	int	pid[m->num_cmds];
+	int	**fd;
+	int	*pid;
 	int	i;
+	int	status;
 
+	create_process_utils(&fd, &pid, m);
 	if (dup2(m->file1, STDIN_FILENO) == -1)
 		pipex_error(DUP_ERR, m, NULL);
 	if (close(m->file1) == -1)
@@ -65,13 +97,14 @@ void	pipex(t_mlist *m, char **envp)
 		else if (pid[i] == 0)
 			child_process(i, fd, m, envp);
 	}
-	parent_process(fd, pid, m);
+	status = parent_process(fd, pid, m);
+	return (status);
 }
 
 int	main(int argv, char **argc, char **envp)
 {
-	t_mlist *m;
-	int hd;
+	t_mlist	*m;
+	int		hd;
 
 	m = NULL;
 	if (argv < 2)

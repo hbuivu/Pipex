@@ -6,22 +6,11 @@
 /*   By: hbui-vu <hbui-vu@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/13 11:17:35 by hbui-vu           #+#    #+#             */
-/*   Updated: 2023/03/15 17:17:57 by hbui-vu          ###   ########.fr       */
+/*   Updated: 2023/03/16 13:41:28 by hbui-vu          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "pipex.h"
-
-int	detect_alnum(char *str)
-{
-	while (*str)
-	{
-		if (ft_isalnum(*str))
-			return (1);
-		str++;
-	}
-	return (0);
-}
 
 char	**get_env_paths(char **envp)
 {
@@ -42,33 +31,9 @@ char	**get_env_paths(char **envp)
 	return (env_paths);
 }
 
-char	*ft_strjoin_char(char const *s1, char const *s2, char c)
-{
-	char	*buffer;
-	int		k;
-	int		i;
-
-	if (!s1)
-		return (NULL);
-	if (!s2)
-		k = ft_strlen(s1) + 2;
-	else
-		k = ft_strlen(s1) + ft_strlen(s2) + 2;
-	buffer = (char *)ft_calloc(k, sizeof(char));
-	if (!buffer)
-		return (NULL);
-	i = ft_strlcpy(buffer, s1, k);
-	buffer[i] = c;
-	if (s2)
-		ft_strlcat(buffer, s2, k);
-	return (buffer);
-}
-
 char	*get_path(t_mlist *m, char *arg)
 {
 	int		i;
-	int		f;
-	int		x;
 	char	*path;
 
 	i = 0;
@@ -84,18 +49,23 @@ char	*get_path(t_mlist *m, char *arg)
 	while (m->env_paths[i])
 	{
 		path = ft_strjoin_char(m->env_paths[i], arg, '/');
-		f = access(path, F_OK);
-		x = access(path, X_OK);
-		if (f == 0 && x == 0)
-			break ;
-		else if (f == 0 && x < 0)
+		if (access(path, F_OK) == 0 && access(path, X_OK) == 0)
+			return (path);
+		else if (access(path, F_OK) == 0 && access(path, X_OK) < 0)
 			return (NULL);
 		free(path);
 		i++;
 	}
-	if (f == 0 && x == 0)
-		return (path);
 	return (NULL);
+}
+
+void	set_counters(int hd, int *a, int *i)
+{
+	if (hd == 0)
+		*a = 2;
+	else
+		*a = 3;
+	*i = -1;
 }
 
 t_exec	*parse_paths(t_mlist *m, char **argc, int hd, char **envp)
@@ -107,15 +77,9 @@ t_exec	*parse_paths(t_mlist *m, char **argc, int hd, char **envp)
 	exec_list = (t_exec *)ft_calloc(m->num_cmds, sizeof(t_exec));
 	if (!exec_list)
 		pipex_error(MALLOC_ERR, m, NULL);
-	if (hd == 0)
-		a = 2;
-	else
-		a = 3;
-	i = -1;
+	set_counters(hd, &a, &i);
 	while (++i < m->num_cmds)
 	{
-		//this technically does not need to be in the exec list but doing this to save space
-		//also it cannot be used inside of check_command function bc it needs to be freed
 		exec_list[i].type_commands = get_type_commands(argc[a], m);
 		if (check_command(exec_list[i].type_commands, m, envp) == 1)
 			parse_builtin_comm(argc[a], exec_list, i, m);
