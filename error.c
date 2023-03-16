@@ -24,8 +24,6 @@ void	return_err_message(int err)
 		perror("Pipe error");
 	else if (err == FORK_ERR)
 		perror("Fork error");
-	else if (err == EXEC_ERR)
-		perror("exec error");
 	else if (err == DUP_ERR)
 		perror("dup2 error");
 	else if (err == CLOSE_ERR)

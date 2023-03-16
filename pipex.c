@@ -17,9 +17,12 @@ void	create_process_utils(int ***fd, int **pid, t_mlist *m)
 	int	i;
 
 	*fd = (int **)ft_calloc(m->num_cmds - 1, sizeof(int *));
-	i = -1;
-	while (++i < m->num_cmds)
+	i = 0;
+	while (i < m->num_cmds - 1)
+	{
 		(*fd)[i] = (int *)ft_calloc(2, sizeof(int));
+		i++;
+	}
 	*pid = (int *)ft_calloc(m->num_cmds, sizeof(int));
 }
 
