@@ -6,7 +6,7 @@
 /*   By: hbui-vu <hbui-vu@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/16 12:48:34 by hbui-vu           #+#    #+#             */
-/*   Updated: 2023/03/16 14:08:20 by hbui-vu          ###   ########.fr       */
+/*   Updated: 2023/03/16 14:20:53 by hbui-vu          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,7 +66,7 @@ int	parent_process(int **fd, int *pid, t_mlist *m)
 	}
 	free(pid);
 	i = -1;
-	while (++i < m->num_cmds)
+	while (++i < m->num_cmds - 1)
 		free(fd[i]);
 	free(fd);
 	return (status);
