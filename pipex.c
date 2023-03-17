@@ -79,7 +79,7 @@ int	pipex(t_mlist *m, char **envp)
 			child_process(i, m, envp);
 	}
 	status = parent_process(m);
-	return (status);
+	return (WEXITSTATUS(status));
 }
 
 int	main(int argc, char **argv, char **envp)

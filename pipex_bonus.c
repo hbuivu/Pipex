@@ -79,13 +79,14 @@ int	pipex(t_mlist *m, char **envp)
 			child_process(i, m, envp);
 	}
 	status = parent_process(m);
-	return (status);
+	return (WEXITSTATUS(status));
 }
 
 int	main(int argv, char **argc, char **envp)
 {
 	t_mlist	*m;
 	int		hd;
+	int		status;
 
 	m = NULL;
 	if (argv < 2)
@@ -98,11 +99,9 @@ int	main(int argv, char **argc, char **envp)
 	else if (hd == 1 && argv < 6)
 		pipex_error(INVALID_HEREDOC_ARG, m, NULL);
 	m = init_mlist(argv, argc, envp, hd);
-	pipex(m, envp);
+	status = pipex(m, envp);
 	free_mlist(m);
 	if (access("temp", F_OK) == 0)
 		unlink("temp");
-	if (access("stderr", F_OK) == 0)
-		unlink("stderr");
-	return (0);
+	return (status);
 }

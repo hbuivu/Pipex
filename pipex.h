@@ -57,7 +57,6 @@ typedef struct master_list
 	int		num_cmds;
 	char	*limiter;
 	int		lim_len;
-	int		stderr_fd;
 }	t_mlist;
 
 /* error.c */

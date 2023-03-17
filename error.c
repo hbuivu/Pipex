@@ -82,8 +82,6 @@ void	free_mlist(t_mlist *m)
 		close(m->file1);
 	if (m->file2 >= 0)
 		close(m->file2);
-	if (m->stderr_fd >= 0)
-		close(m->stderr_fd);
 	if (m->limiter)
 		free(m->limiter);
 	if (m->pid)
@@ -114,8 +112,8 @@ void	pipex_error(int err, t_mlist *m, char *str)
 		return_err_message(err);
 		if (m)
 			free_mlist(m);
-		// if (err == EXEC_ERR) // but what if there is an invalid file
-		// 	exit(127);
-		exit(1);
+		if (err == EXEC_ERR)
+			exit(127);
+		exit(EXIT_FAILURE);
 	}
 }

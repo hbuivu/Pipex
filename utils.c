@@ -63,7 +63,4 @@ void	init_fd_pid(t_mlist *m)
 	m->pid = (int *)ft_calloc(m->num_cmds, sizeof(int));
 	if (!m->pid)
 		pipex_error(MALLOC_ERR, m, NULL);
-	m->stderr_fd = open("stderr", O_CREAT | O_RDONLY | O_TRUNC, 0666);
-	if (!m->stderr_fd)
-		pipex_error(OPEN_ERR, m, NULL);
 }

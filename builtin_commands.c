@@ -73,8 +73,6 @@ int	check_command(char **commands, t_mlist *m, char **envp)
 	{
 		if (dup2(fd[1], STDOUT_FILENO) == -1)
 			pipex_error(DUP_ERR, m, NULL);
-		if (dup2(m->stderr_fd, STDERR_FILENO) == -1)
-			(pipex_error(DUP_ERR, m, NULL));
 		close(fd[0]);
 		close(fd[1]);
 		execve(m->sh_path, commands, envp);
