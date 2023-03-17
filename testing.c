@@ -23,6 +23,8 @@ void	print_execlist(t_exec *e, int limit)
 		printf("PATH: %s\n", e[i].path);
 		printf("COMMANDS: ");
 		print_splitlist(e[i].commands);
+		printf("TYPE_COMMANDS: ");
+		print_splitlist(e[i].type_commands);
 		i++;
 	}
 }

@@ -1,0 +1,1 @@
+https://unix.stackexchange.com/questions/14270/get-exit-status-of-process-thats-piped-to-another

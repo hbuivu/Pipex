@@ -6,7 +6,7 @@
 /*   By: hbui-vu <hbui-vu@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/13 13:41:01 by hbui-vu           #+#    #+#             */
-/*   Updated: 2023/03/16 13:48:11 by hbui-vu          ###   ########.fr       */
+/*   Updated: 2023/03/17 12:04:53 by hbui-vu          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,6 +34,7 @@ enum	e_perrors
 	DUP_ERR,
 	CLOSE_ERR,
 	INVALID_ARG,
+	INVALID_BONUS_ARG,
 	INVALID_HEREDOC_ARG
 };
 
@@ -49,11 +50,14 @@ typedef struct master_list
 	t_exec	*exec_list;
 	char	**env_paths;
 	char	*sh_path;
+	int		**fd;
+	int		*pid;
 	int		file1;
 	int		file2;
 	int		num_cmds;
 	char	*limiter;
 	int		lim_len;
+	int		stderr_fd;
 }	t_mlist;
 
 /* error.c */
@@ -64,6 +68,7 @@ void	pipex_error(int err, t_mlist *m, char *str);
 /* utils.c */
 char	*ft_strjoin_char(char const *s1, char const *s2, char c);
 int		detect_alnum(char *str);
+void	init_fd_pid(t_mlist *m);
 
 /* mlist.c */
 t_mlist	*init_mlist(int argv, char **argc, char **envp, int hd);
@@ -74,7 +79,7 @@ void	fill_heredoc_mlist(t_mlist *m, int argv, char **argc);
 /* builtin_commands.c */
 int		check_command(char **commands, t_mlist *m, char **envp);
 char	**get_type_commands(char *command, t_mlist *m);
-void	parse_builtin_comm(char *command, t_exec *exec_list, int i, t_mlist *m);
+void	parse_builtin_comm(char *command, int i, t_mlist *m);
 
 /* testing.c */
 void	print_file(int fd);

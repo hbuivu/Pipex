@@ -6,7 +6,7 @@
 /*   By: hbui-vu <hbui-vu@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/13 11:17:35 by hbui-vu           #+#    #+#             */
-/*   Updated: 2023/03/16 13:41:28 by hbui-vu          ###   ########.fr       */
+/*   Updated: 2023/03/17 10:29:19 by hbui-vu          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,33 +68,31 @@ void	set_counters(int hd, int *a, int *i)
 	*i = -1;
 }
 
-t_exec	*parse_paths(t_mlist *m, char **argc, int hd, char **envp)
+void	parse_paths(t_mlist *m, char **argc, int hd, char **envp)
 {
 	int		a;
 	int		i;
-	t_exec	*exec_list;
 
-	exec_list = (t_exec *)ft_calloc(m->num_cmds, sizeof(t_exec));
-	if (!exec_list)
+	m->exec_list = (t_exec *)ft_calloc(m->num_cmds, sizeof(t_exec));
+	if (!m->exec_list)
 		pipex_error(MALLOC_ERR, m, NULL);
 	set_counters(hd, &a, &i);
 	while (++i < m->num_cmds)
 	{
-		exec_list[i].type_commands = get_type_commands(argc[a], m);
-		if (check_command(exec_list[i].type_commands, m, envp) == 1)
-			parse_builtin_comm(argc[a], exec_list, i, m);
+		m->exec_list[i].type_commands = get_type_commands(argc[a], m);
+		if (check_command(m->exec_list[i].type_commands, m, envp) == 1)
+			parse_builtin_comm(argc[a], i, m);
 		else
 		{
-			exec_list[i].commands = ft_split(argc[a], ' ');
-			if (!exec_list[i].commands)
+			m->exec_list[i].commands = ft_split(argc[a], ' ');
+			if (!m->exec_list[i].commands)
 				pipex_error(MALLOC_ERR, m, NULL);
-			exec_list[i].path = get_path(m, exec_list[i].commands[0]);
-			if (!exec_list[i].path)
-				pipex_error(NO_PATH, m, exec_list[i].commands[0]);
+			m->exec_list[i].path = get_path(m, m->exec_list[i].commands[0]);
+			if (!m->exec_list[i].path)
+				pipex_error(NO_PATH, m, m->exec_list[i].commands[0]);
 		}
 		a++;
 	}
-	return (exec_list);
 }
 
 t_mlist	*init_mlist(int argv, char **argc, char **envp, int hd)
@@ -121,6 +119,7 @@ t_mlist	*init_mlist(int argv, char **argc, char **envp, int hd)
 	}
 	else
 		fill_heredoc_mlist(m, argv, argc);
-	m->exec_list = parse_paths(m, argc, hd, envp);
+	parse_paths(m, argc, hd, envp);
+	init_fd_pid(m);
 	return (m);
 }

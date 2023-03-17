@@ -73,6 +73,8 @@ int	check_command(char **commands, t_mlist *m, char **envp)
 	{
 		if (dup2(fd[1], STDOUT_FILENO) == -1)
 			pipex_error(DUP_ERR, m, NULL);
+		if (dup2(m->stderr_fd, STDERR_FILENO) == -1)
+			(pipex_error(DUP_ERR, m, NULL));
 		close(fd[0]);
 		close(fd[1]);
 		execve(m->sh_path, commands, envp);
@@ -82,18 +84,18 @@ int	check_command(char **commands, t_mlist *m, char **envp)
 	return (i);
 }
 
-void	parse_builtin_comm(char *command, t_exec *exec_list, int i, t_mlist *m)
+void	parse_builtin_comm(char *command, int i, t_mlist *m)
 {
 	char	*args;
 
 	args = ft_strjoin_char("sh,-c,", command, ',');
 	if (!args)
 		pipex_error(MALLOC_ERR, m, NULL);
-	exec_list[i].path = ft_strdup(m->sh_path);
-	if (!exec_list[i].path)
+	m->exec_list[i].path = ft_strdup(m->sh_path);
+	if (!m->exec_list[i].path)
 		pipex_error(MALLOC_ERR, m, NULL);
-	exec_list[i].commands = ft_split(args, ',');
-	if (!exec_list[i].commands)
+	m->exec_list[i].commands = ft_split(args, ',');
+	if (!m->exec_list[i].commands)
 		pipex_error(MALLOC_ERR, m, NULL);
 	free(args);
 }

@@ -20,10 +20,11 @@ int main(int argv, char **argc, char **envp)
 	// int	i = ft_printf_err("%s", str);
 	// printf("%i\n", i);
 	char *path = NULL;
-	char *args[3] = {"something", "something", NULL};
+	char *args[4] = {"something", "-c", "type urgh", NULL};
 	execve(path, args, envp);
 	printf("%s\n", strerror(errno));
-	printf("unsuccessful");
+	// printf("unsuccessful");
+
 }
 
 // https://stackoverflow.com/questions/66201463/how-can-i-print-the-exit-status-inside-of-the-code
