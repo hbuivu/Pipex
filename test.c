@@ -10,34 +10,34 @@
 int main(int argv, char **argc, char **envp)
 // int main(void)
 {
-	(void)argv;
-	(void)argc;
-	int fd[2];
-	int	pid;
+	// (void)argv;
+	// (void)argc;
+	// int fd[2];
+	// int	pid;
 
-	pipe(fd);
-	pid = fork();
-	if (pid == 0)
-	{
-		// char *path = "/bin/sh";
-		// char *args[4] = {"sh", "-c", "type urgh", NULL};
-		char *path = "/bin/ls";
-		char *args[4] = {"ls", "ls", NULL};
-		close(fd[0]);
-		dup2(fd[1], STDERR_FILENO);
-		dup2(fd[1], STDOUT_FILENO);
+	// pipe(fd);
+	// pid = fork();
+	// if (pid == 0)
+	// {
+	// 	// char *path = "/bin/sh";
+	// 	// char *args[4] = {"sh", "-c", "type urgh", NULL};
+	// 	char *path = "/bin/ls";
+	// 	char *args[4] = {"ls", "ls", NULL};
+	// 	close(fd[0]);
+	// 	dup2(fd[1], STDERR_FILENO);
+	// 	dup2(fd[1], STDOUT_FILENO);
 		
-		close(fd[1]);
-		if (execve(path, args, envp) == -1)
-			exit(1);
-	}
-	wait(NULL);
-	char buf[2000];
-	close(fd[1]);
-	read(fd[0], buf, 1000);
-	// printf("%s\n", buf);
-	close(fd[0]);
-	return (0);
+	// 	close(fd[1]);
+	// 	if (execve(path, args, envp) == -1)
+	// 		exit(1);
+	// }
+	// wait(NULL);
+	// char buf[2000];
+	// close(fd[1]);
+	// read(fd[0], buf, 1000);
+	// // printf("%s\n", buf);
+	// close(fd[0]);
+	// return (0);
 	// char *path = "/usr/bin/sh";
 	// char *args[5] = {"sh", "-c", "type -t type", NULL}; //why does this give an error?????
 	// if (execve(path, args, envp) == -1)
@@ -48,6 +48,11 @@ int main(int argv, char **argc, char **envp)
 
 	// printf("%s\n", strerror(errno));
 	// printf("unsuccessful");
+
+	int fd = open("/dev/null", O_RDWR);
+	printf("%i\n", fd);
+	close(fd);
+	printf("%i\n", fd);
 
 }
 

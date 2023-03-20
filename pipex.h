@@ -6,7 +6,7 @@
 /*   By: hbui-vu <hbui-vu@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/13 13:41:01 by hbui-vu           #+#    #+#             */
-/*   Updated: 2023/03/17 12:04:53 by hbui-vu          ###   ########.fr       */
+/*   Updated: 2023/03/20 16:41:45 by hbui-vu          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,6 +54,7 @@ typedef struct master_list
 	int		*pid;
 	int		file1;
 	int		file2;
+	int		nofile;
 	int		num_cmds;
 	char	*limiter;
 	int		lim_len;
@@ -70,7 +71,7 @@ int		detect_alnum(char *str);
 void	init_fd_pid(t_mlist *m);
 
 /* mlist.c */
-t_mlist	*init_mlist(int argv, char **argc, char **envp, int hd);
+t_mlist	*init_mlist(int argc, char **argv, char **envp, int hd);
 
 /* heredoc.c */
 void	fill_heredoc_mlist(t_mlist *m, int argv, char **argc);
@@ -79,6 +80,9 @@ void	fill_heredoc_mlist(t_mlist *m, int argv, char **argc);
 int		check_command(char **commands, t_mlist *m, char **envp);
 char	**get_type_commands(char *command, t_mlist *m);
 void	parse_builtin_comm(char *command, int i, t_mlist *m);
+
+ /* pipex.c */
+ int	pipex(t_mlist *m, char **envp);
 
 /* testing.c */
 void	print_file(int fd);

@@ -6,16 +6,16 @@
 #    By: hbui-vu <hbui-vu@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/02/23 13:26:57 by hbui-vu           #+#    #+#              #
-#    Updated: 2023/03/20 13:41:13 by hbui-vu          ###   ########.fr        #
+#    Updated: 2023/03/20 16:34:37 by hbui-vu          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME = pipex
 
-SRCS = error.c utils.c mlist.c heredoc.c builtin_commands.c pipex.c testing.c
-BSRCS = error.c utils.c mlist.c heredoc.c builtin_commands.c pipex_bonus.c testing.c
+SRCS = error.c utils.c mlist.c heredoc.c builtin_commands.c pipex.c main.c testing.c
+BSRCS = error.c utils.c mlist.c heredoc.c builtin_commands.c pipex.c main_bonus.c testing.c
 
-CFLAGS = -Wall -Wextra -Werror
+CFLAGS = -Wall -Wextra -Werror -fsanitize=address
 
 CC = cc
 

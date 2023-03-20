@@ -1,1 +1,3 @@
 https://unix.stackexchange.com/questions/14270/get-exit-status-of-process-thats-piped-to-another
+
+https://stackoverflow.com/questions/14846768/in-c-how-do-i-redirect-stdout-fileno-to-dev-null-using-dup2-and-then-redirect

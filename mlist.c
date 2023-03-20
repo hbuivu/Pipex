@@ -6,7 +6,7 @@
 /*   By: hbui-vu <hbui-vu@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/13 11:17:35 by hbui-vu           #+#    #+#             */
-/*   Updated: 2023/03/17 10:29:19 by hbui-vu          ###   ########.fr       */
+/*   Updated: 2023/03/20 16:38:05 by hbui-vu          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,7 +68,7 @@ void	set_counters(int hd, int *a, int *i)
 	*i = -1;
 }
 
-void	parse_paths(t_mlist *m, char **argc, int hd, char **envp)
+void	parse_paths(t_mlist *m, char **argv, int hd, char **envp)
 {
 	int		a;
 	int		i;
@@ -79,12 +79,12 @@ void	parse_paths(t_mlist *m, char **argc, int hd, char **envp)
 	set_counters(hd, &a, &i);
 	while (++i < m->num_cmds)
 	{
-		m->exec_list[i].type_commands = get_type_commands(argc[a], m);
+		m->exec_list[i].type_commands = get_type_commands(argv[a], m);
 		if (check_command(m->exec_list[i].type_commands, m, envp) == 1)
-			parse_builtin_comm(argc[a], i, m);
+			parse_builtin_comm(argv[a], i, m);
 		else
 		{
-			m->exec_list[i].commands = ft_split(argc[a], ' ');
+			m->exec_list[i].commands = ft_split(argv[a], ' ');
 			if (!m->exec_list[i].commands)
 				pipex_error(MALLOC_ERR, m, NULL);
 			m->exec_list[i].path = get_path(m, m->exec_list[i].commands[0]);
@@ -95,7 +95,7 @@ void	parse_paths(t_mlist *m, char **argc, int hd, char **envp)
 	}
 }
 
-t_mlist	*init_mlist(int argv, char **argc, char **envp, int hd)
+t_mlist	*init_mlist(int argc, char **argv, char **envp, int hd)
 {
 	t_mlist	*m;
 
@@ -109,17 +109,17 @@ t_mlist	*init_mlist(int argv, char **argc, char **envp, int hd)
 	m->sh_path = get_path(m, "sh");
 	if (hd == 0)
 	{
-		m->num_cmds = argv - 3;
-		m->file1 = open(argc[1], O_RDONLY);
+		m->num_cmds = argc - 3;
+		m->file1 = open(argv[1], O_RDONLY);
 		if (m->file1 == -1)
-			pipex_error(NO_FILE, m, argc[1]);
-		m->file2 = open(argc[argv - 1], O_CREAT | O_RDWR | O_TRUNC, 0666);
+			pipex_error(NO_FILE, m, argv[1]);
+		m->file2 = open(argv[argc - 1], O_CREAT | O_RDWR | O_TRUNC, 0666);
 		if (m->file2 == -1)
 			pipex_error(OPEN_ERR, m, NULL);
 	}
 	else
-		fill_heredoc_mlist(m, argv, argc);
-	parse_paths(m, argc, hd, envp);
+		fill_heredoc_mlist(m, argc, argv);
+	parse_paths(m, argv, hd, envp);
 	init_fd_pid(m);
 	return (m);
 }

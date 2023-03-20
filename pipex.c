@@ -6,7 +6,7 @@
 /*   By: hbui-vu <hbui-vu@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/16 12:48:34 by hbui-vu           #+#    #+#             */
-/*   Updated: 2023/03/17 11:39:22 by hbui-vu          ###   ########.fr       */
+/*   Updated: 2023/03/20 17:37:24 by hbui-vu          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,8 +15,10 @@
 void	child_process(int i, t_mlist *m, char **envp)
 {
 	int	j;
-
-	if (i == 0 && dup2(m->fd[i][1], STDOUT_FILENO) == -1)
+	
+	if (i == 0 && !m->nofile && dup2(m->fd[i][1], STDOUT_FILENO) == -1)
+		pipex_error(DUP_ERR, m, NULL);
+	if (i == 0 && m->nofile && dup2(m->file1, STDOUT_FILENO) == -1)
 		pipex_error(DUP_ERR, m, NULL);
 	if (i > 0 && dup2(m->fd[i - 1][0], STDIN_FILENO) == -1)
 		pipex_error(DUP_ERR, m, NULL);
@@ -60,7 +62,7 @@ int	pipex(t_mlist *m, char **envp)
 {
 	int	i;
 	int	status;
-
+	
 	if (dup2(m->file1, STDIN_FILENO) == -1)
 		pipex_error(DUP_ERR, m, NULL);
 	if (close(m->file1) == -1)
@@ -80,22 +82,4 @@ int	pipex(t_mlist *m, char **envp)
 	}
 	status = parent_process(m);
 	return (WEXITSTATUS(status));
-}
-
-int	main(int argc, char **argv, char **envp)
-{
-	t_mlist	*m;
-	int		hd;
-	int		status;
-
-	m = NULL;
-	hd = 0;
-	if (argc != 5)
-		pipex_error(INVALID_ARG, m, NULL);
-	m = init_mlist(argc, argv, envp, hd);
-	status = pipex(m, envp);
-	free_mlist(m);
-	if (access("temp", F_OK) == 0)
-		unlink("temp");
-	return (status);
 }

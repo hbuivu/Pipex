@@ -6,7 +6,7 @@
 /*   By: hbui-vu <hbui-vu@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/13 10:11:38 by hbui-vu           #+#    #+#             */
-/*   Updated: 2023/03/20 14:22:52 by hbui-vu          ###   ########.fr       */
+/*   Updated: 2023/03/20 15:50:07 by hbui-vu          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,15 +66,15 @@ int	heredoc_fd(t_mlist *m)
 	return (fd[0]);
 }
 
-void	fill_heredoc_mlist(t_mlist *m, int argv, char **argc)
+void	fill_heredoc_mlist(t_mlist *m, int argc, char **argv)
 {
-	m->num_cmds = argv - 4;
-	m->limiter = ft_strjoin_char(argc[2], NULL, '\n');
+	m->num_cmds = argc - 4;
+	m->limiter = ft_strjoin_char(argv[2], NULL, '\n');
 	if (!m->limiter)
 		pipex_error(MALLOC_ERR, m, NULL);
 	m->lim_len = ft_strlen(m->limiter);
 	m->file1 = heredoc_fd(m);
-	m->file2 = open(argc[argv - 1], O_CREAT | O_RDWR | O_APPEND, 0666);
+	m->file2 = open(argv[argc - 1], O_CREAT | O_RDWR | O_APPEND, 0666);
 	if (m->file1 == -1 || m->file2 == -1)
 		pipex_error(OPEN_ERR, m, NULL);
 }

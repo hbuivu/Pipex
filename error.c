@@ -6,7 +6,7 @@
 /*   By: hbui-vu <hbui-vu@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/13 13:43:34 by hbui-vu           #+#    #+#             */
-/*   Updated: 2023/03/20 14:13:40 by hbui-vu          ###   ########.fr       */
+/*   Updated: 2023/03/20 17:25:04 by hbui-vu          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -99,12 +99,16 @@ void	free_mlist(t_mlist *m)
 void	pipex_error(int err, t_mlist *m, char *str)
 {
 	if (err == NO_PATH)
-		ft_printf_err("%s: command not found\n", str);
+		ft_printf_err("command not found: %s\n", str);
 	else if (err == NO_FILE)
 	{
 		ft_printf_err("%s: No such file or directory\n", str);
-		m->file1 = open("temp", O_CREAT | O_RDONLY | O_TRUNC, 0666);
-		if (!m->file1)
+		// m->file1 = open("temp", O_CREAT | O_RDONLY | O_TRUNC, 0666);
+		// if (!m->file1)
+		// 	pipex_error(OPEN_ERR, m, NULL);
+		m->file1 = open("/dev/null", O_RDONLY);
+		m->nofile = 1;
+		if (m->file1 == -1)
 			pipex_error(OPEN_ERR, m, NULL);
 	}
 	else
