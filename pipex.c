@@ -31,8 +31,8 @@ void	child_process(int i, t_mlist *m, char **envp)
 		close(m->fd[j][1]);
 		j++;
 	}
-	execve(m->exec_list[i].path, m->exec_list[i].commands, envp);
-	pipex_error(EXEC_ERR, m, NULL);
+	if (execve(m->exec_list[i].path, m->exec_list[i].commands, envp) == -1)
+		pipex_error(EXEC_ERR, m, NULL);
 }
 
 int	parent_process(t_mlist *m)

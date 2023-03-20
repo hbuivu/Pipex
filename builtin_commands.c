@@ -75,7 +75,8 @@ int	check_command(char **commands, t_mlist *m, char **envp)
 			pipex_error(DUP_ERR, m, NULL);
 		close(fd[0]);
 		close(fd[1]);
-		execve(m->sh_path, commands, envp);
+		if (execve(m->sh_path, commands, envp) == -1)
+			pipex_error(EXEC_ERR, m, NULL);
 	}
 	wait(NULL);
 	i = check_command_parent(fd, m);
