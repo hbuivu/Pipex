@@ -103,10 +103,7 @@ void	pipex_error(int err, t_mlist *m, char *str)
 	else if (err == NO_FILE)
 	{
 		ft_printf_err("%s: No such file or directory\n", str);
-		// m->file1 = open("temp", O_CREAT | O_RDONLY | O_TRUNC, 0666);
-		// if (!m->file1)
-		// 	pipex_error(OPEN_ERR, m, NULL);
-		m->file1 = open("/dev/null", O_RDONLY);
+		m->file1 = open("/dev/null", O_RDWR);
 		m->nofile = 1;
 		if (m->file1 == -1)
 			pipex_error(OPEN_ERR, m, NULL);

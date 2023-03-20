@@ -31,7 +31,5 @@ int	main(int argc, char **argv, char **envp)
 	m = init_mlist(argc, argv, envp, hd);
 	status = pipex(m, envp);
 	free_mlist(m);
-	// if (access("temp", F_OK) == 0)
-	// 	unlink("temp");
 	return (status);
 }
