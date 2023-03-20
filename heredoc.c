@@ -6,7 +6,7 @@
 /*   By: hbui-vu <hbui-vu@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/13 10:11:38 by hbui-vu           #+#    #+#             */
-/*   Updated: 2023/03/16 13:52:24 by hbui-vu          ###   ########.fr       */
+/*   Updated: 2023/03/20 14:22:52 by hbui-vu          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,6 +61,7 @@ int	heredoc_fd(t_mlist *m)
 		pipex_error(PIPE_ERR, m, NULL);
 	str = here_doc(m);
 	write(fd[1], str, ft_strlen(str));
+	free(str);
 	close(fd[1]);
 	return (fd[0]);
 }

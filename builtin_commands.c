@@ -71,7 +71,8 @@ int	check_command(char **commands, t_mlist *m, char **envp)
 		pipex_error(FORK_ERR, m, NULL);
 	else if (pid == 0)
 	{
-		if (dup2(fd[1], STDOUT_FILENO) == -1)
+		if (dup2(fd[1], STDOUT_FILENO) == -1
+			|| dup2(fd[1], STDERR_FILENO) == -1)
 			pipex_error(DUP_ERR, m, NULL);
 		close(fd[0]);
 		close(fd[1]);

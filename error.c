@@ -6,7 +6,7 @@
 /*   By: hbui-vu <hbui-vu@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/13 13:43:34 by hbui-vu           #+#    #+#             */
-/*   Updated: 2023/03/17 12:07:15 by hbui-vu          ###   ########.fr       */
+/*   Updated: 2023/03/20 14:13:40 by hbui-vu          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -103,7 +103,7 @@ void	pipex_error(int err, t_mlist *m, char *str)
 	else if (err == NO_FILE)
 	{
 		ft_printf_err("%s: No such file or directory\n", str);
-		m->file1 = open("temp", O_CREAT | O_RDONLY | O_TRUNC, 0666); 
+		m->file1 = open("temp", O_CREAT | O_RDONLY | O_TRUNC, 0666);
 		if (!m->file1)
 			pipex_error(OPEN_ERR, m, NULL);
 	}

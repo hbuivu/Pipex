@@ -6,7 +6,7 @@
 /*   By: hbui-vu <hbui-vu@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/16 12:48:34 by hbui-vu           #+#    #+#             */
-/*   Updated: 2023/03/17 12:09:20 by hbui-vu          ###   ########.fr       */
+/*   Updated: 2023/03/20 13:42:09 by hbui-vu          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,7 @@ void	child_process(int i, t_mlist *m, char **envp)
 		close(m->fd[j][1]);
 		j++;
 	}
-	if (execve(m->exec_list[i].path, m->exec_list[i].commands, envp == -1))
+	if (execve(m->exec_list[i].path, m->exec_list[i].commands, envp) == -1)
 		pipex_error(EXEC_ERR, m, NULL);
 }
 
