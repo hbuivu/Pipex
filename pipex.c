@@ -83,10 +83,8 @@ int	pipex(t_mlist *m, char **envp)
 	
 	if (dup2(m->file1, STDIN_FILENO) == -1)
 		pipex_error(DUP_ERR, m, NULL);
-	close(m->file1);
-	m->file1 = -5;
-	// if (close(m->file1) == -1)
-	// 	pipex_error(CLOSE_ERR, m, NULL);
+	if (close(m->file1) == -1)
+		pipex_error(CLOSE_ERR, m, NULL);
 	i = -1;
 	while (++i < m->num_cmds - 1)
 		if (pipe(m->fd[i]) == -1)
