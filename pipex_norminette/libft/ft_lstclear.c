@@ -1,30 +1,27 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   main.c                                             :+:      :+:    :+:   */
+/*   ft_lstclear.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: hbui-vu <hbui-vu@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/03/20 15:28:51 by hbui-vu           #+#    #+#             */
-/*   Updated: 2023/03/21 13:23:06 by hbui-vu          ###   ########.fr       */
+/*   Created: 2022/09/26 14:01:54 by hbui-vu           #+#    #+#             */
+/*   Updated: 2022/09/26 14:12:15 by hbui-vu          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "pipex.h"
+#include "libft.h"
 
-int	main(int argc, char **argv, char **envp)
+void	ft_lstclear(t_list **lst, void (*del)(void *))
 {
-	t_mlist	*m;
-	int		hd;
-	int		status;
+	t_list	*tmp;
 
-	m = NULL;
-	hd = 0;
-	print_splitlist(envp);
-	if (argc != 5)
-		pipex_error(INVALID_ARG, m, NULL);
-	m = init_mlist(argc, argv, envp, hd);
-	status = pipex(m, envp);
-	free_mlist(m);
-	return (status);
+	if (!lst || !del || !*lst)
+		return ;
+	while (*lst)
+	{
+		tmp = *lst;
+		*lst = (*lst)->next;
+		ft_lstdelone(tmp, del);
+	}
 }

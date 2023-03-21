@@ -1,30 +1,33 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   main.c                                             :+:      :+:    :+:   */
+/*   ft_strmapi.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: hbui-vu <hbui-vu@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/03/20 15:28:51 by hbui-vu           #+#    #+#             */
-/*   Updated: 2023/03/21 13:23:06 by hbui-vu          ###   ########.fr       */
+/*   Created: 2022/09/24 19:31:04 by hbui-vu           #+#    #+#             */
+/*   Updated: 2022/09/27 17:37:39 by hbui-vu          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "pipex.h"
+#include "libft.h"
 
-int	main(int argc, char **argv, char **envp)
+char	*ft_strmapi(char const *s, char (*f)(unsigned int, char))
 {
-	t_mlist	*m;
-	int		hd;
-	int		status;
+	unsigned int	i;
+	char			*str;
 
-	m = NULL;
-	hd = 0;
-	print_splitlist(envp);
-	if (argc != 5)
-		pipex_error(INVALID_ARG, m, NULL);
-	m = init_mlist(argc, argv, envp, hd);
-	status = pipex(m, envp);
-	free_mlist(m);
-	return (status);
+	if (!s || !f)
+		return (NULL);
+	i = 0;
+	str = (char *)malloc(sizeof(char) * ft_strlen(s) + 1);
+	if (!str)
+		return (NULL);
+	while (s[i])
+	{
+		str[i] = f(i, s[i]);
+		i++;
+	}
+	str[i] = '\0';
+	return (str);
 }

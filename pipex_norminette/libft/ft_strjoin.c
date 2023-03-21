@@ -1,30 +1,29 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   main.c                                             :+:      :+:    :+:   */
+/*   ft_strjoin.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: hbui-vu <hbui-vu@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/03/20 15:28:51 by hbui-vu           #+#    #+#             */
-/*   Updated: 2023/03/21 13:23:06 by hbui-vu          ###   ########.fr       */
+/*   Created: 2022/09/20 10:41:25 by hbui-vu           #+#    #+#             */
+/*   Updated: 2022/09/27 15:16:09 by hbui-vu          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "pipex.h"
+#include "libft.h"
 
-int	main(int argc, char **argv, char **envp)
+char	*ft_strjoin(char const *s1, char const *s2)
 {
-	t_mlist	*m;
-	int		hd;
-	int		status;
+	char	*buffer;
+	int		k;
 
-	m = NULL;
-	hd = 0;
-	print_splitlist(envp);
-	if (argc != 5)
-		pipex_error(INVALID_ARG, m, NULL);
-	m = init_mlist(argc, argv, envp, hd);
-	status = pipex(m, envp);
-	free_mlist(m);
-	return (status);
+	if (!s1 || !s2)
+		return (NULL);
+	k = ft_strlen(s1) + ft_strlen(s2) + 1;
+	buffer = (char *)malloc(sizeof(char) * k);
+	if (!buffer)
+		return (NULL);
+	ft_strlcpy(buffer, s1, k);
+	ft_strlcat(buffer, s2, k);
+	return (buffer);
 }

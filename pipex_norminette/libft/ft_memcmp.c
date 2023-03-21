@@ -1,30 +1,33 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   main.c                                             :+:      :+:    :+:   */
+/*   ft_memcmp.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: hbui-vu <hbui-vu@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/03/20 15:28:51 by hbui-vu           #+#    #+#             */
-/*   Updated: 2023/03/21 13:23:06 by hbui-vu          ###   ########.fr       */
+/*   Created: 2022/09/24 12:11:22 by hbui-vu           #+#    #+#             */
+/*   Updated: 2022/09/27 17:19:34 by hbui-vu          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "pipex.h"
+#include "libft.h"
 
-int	main(int argc, char **argv, char **envp)
+int	ft_memcmp(const void *s1, const void *s2, size_t n)
 {
-	t_mlist	*m;
-	int		hd;
-	int		status;
+	unsigned char	*t1;
+	unsigned char	*t2;
+	size_t			i;
 
-	m = NULL;
-	hd = 0;
-	print_splitlist(envp);
-	if (argc != 5)
-		pipex_error(INVALID_ARG, m, NULL);
-	m = init_mlist(argc, argv, envp, hd);
-	status = pipex(m, envp);
-	free_mlist(m);
-	return (status);
+	t1 = (unsigned char *)s1;
+	t2 = (unsigned char *)s2;
+	i = 0;
+	if (n == 0)
+		return (0);
+	while (i < n)
+	{
+		if (t1[i] != t2[i])
+			return (t1[i] - t2[i]);
+		i++;
+	}
+	return (0);
 }

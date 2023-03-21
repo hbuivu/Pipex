@@ -1,30 +1,30 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   main.c                                             :+:      :+:    :+:   */
+/*   ft_memmove.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: hbui-vu <hbui-vu@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/03/20 15:28:51 by hbui-vu           #+#    #+#             */
-/*   Updated: 2023/03/21 13:23:06 by hbui-vu          ###   ########.fr       */
+/*   Created: 2022/09/23 12:26:41 by hbui-vu           #+#    #+#             */
+/*   Updated: 2022/09/23 14:50:29 by hbui-vu          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "pipex.h"
+#include "libft.h"
 
-int	main(int argc, char **argv, char **envp)
+void	*ft_memmove(void *dst, const void *src, size_t len)
 {
-	t_mlist	*m;
-	int		hd;
-	int		status;
+	int	i;
 
-	m = NULL;
-	hd = 0;
-	print_splitlist(envp);
-	if (argc != 5)
-		pipex_error(INVALID_ARG, m, NULL);
-	m = init_mlist(argc, argv, envp, hd);
-	status = pipex(m, envp);
-	free_mlist(m);
-	return (status);
+	i = len - 1;
+	if (dst == NULL && src == NULL)
+		return (NULL);
+	if (&((unsigned char *)src)[0] > &((unsigned char *)dst)[0])
+		return (ft_memcpy(dst, src, len));
+	while (i >= 0)
+	{
+		((unsigned char *)dst)[i] = ((unsigned char *)src)[i];
+		i--;
+	}
+	return (dst);
 }
