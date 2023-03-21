@@ -6,7 +6,7 @@
 /*   By: hbui-vu <hbui-vu@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/13 13:43:34 by hbui-vu           #+#    #+#             */
-/*   Updated: 2023/03/20 17:25:04 by hbui-vu          ###   ########.fr       */
+/*   Updated: 2023/03/21 11:54:55 by hbui-vu          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,11 +29,11 @@ void	return_err_message(int err)
 	else if (err == CLOSE_ERR)
 		perror("close error");
 	else if (err == INVALID_ARG)
-		ft_putstr_fd("usage: ./pipex file 1 cmd1 cmd2 file2\n", 2);
+		ft_putstr_fd("usage: ./pipex file1 1 cmd1 cmd2 file2\n", 2);
 	else if (err == INVALID_BONUS_ARG)
-		ft_putstr_fd("usage: ./pipex file 1 cmd1 cmd2 cmd 3... file2\n", 2);
+		ft_putstr_fd("usage: ./pipex file1 1 cmd1 cmd2 cmd 3... file2\n", 2);
 	else if (err == INVALID_HEREDOC_ARG)
-		ft_putstr_fd("usage: ./pipex heredoc LIMITER cmd1 cmd2 file\n", 2);
+		ft_putstr_fd("usage: ./pipex here_doc LIMITER cmd1 cmd2 file2\n", 2);
 	return ;
 }
 
