@@ -6,7 +6,7 @@
 /*   By: hbui-vu <hbui-vu@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/16 12:48:34 by hbui-vu           #+#    #+#             */
-/*   Updated: 2023/03/20 17:37:24 by hbui-vu          ###   ########.fr       */
+/*   Updated: 2023/03/21 11:25:36 by hbui-vu          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,7 @@ void	process_nofile(t_mlist *m)
 void	child_process(int i, t_mlist *m, char **envp)
 {
 	int	j;
-	
+
 	if (i == 0 && m->nofile)
 		process_nofile(m);
 	if (i == 0 && dup2(m->fd[i][1], STDOUT_FILENO) == -1)
@@ -80,7 +80,7 @@ int	pipex(t_mlist *m, char **envp)
 {
 	int	i;
 	int	status;
-	
+
 	if (dup2(m->file1, STDIN_FILENO) == -1)
 		pipex_error(DUP_ERR, m, NULL);
 	if (close(m->file1) == -1)
